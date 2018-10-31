@@ -7,7 +7,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     kubernetes.io/ingress.global-static-ip-name: {{ required "Missing value FDK_INGRESS_IP_NAME" .Values.FDK_INGRESS_IP_NAME }}
-    ingress.gcp.kubernetes.io/pre-shared-cert: {{ required "Missing value FDK_CERT_NAME" .Values.FDK_CERT_NAME | quote }}
+    ingress.gcp.kubernetes.io/pre-shared-cert: {{ required "Missing value FDK_ALL_CERT_NAMES" .Values.FDK_ALL_CERT_NAMES | quote }}
 spec:
   rules:
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_REG" .Values.FDK_INGRESS_HOSTNAME_REG }}
@@ -24,6 +24,19 @@ spec:
         backend:
           serviceName: nginx-search
           servicePort: 8080
+  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
+    http:
+      paths:
+      - backend:
+          serviceName: nginx-search
+          servicePort: 8080
+        path: /*
   tls:
-    - secretName: {{ required "Missing value FDK_CERT_NAME" .Values.FDK_CERT_NAME }}
+  - hosts:
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_REG" .Values.FDK_INGRESS_HOSTNAME_REG }}
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_WWW" .Values.FDK_INGRESS_HOSTNAME_WWW }}
+    secretName: {{ required "Missing value FDK_CERT_NAME_ENV" .Values.FDK_CERT_NAME_ENV }}
+  - hosts:
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
+    secretName: {{ required "Missing value FDK_CERT_NAME_BASE" .Values.FDK_CERT_NAME_BASE }}
 {{ else }} {{ end }}
