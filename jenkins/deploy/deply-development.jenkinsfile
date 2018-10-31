@@ -1,0 +1,228 @@
+/*
+  Deploys to a specified develop-environment.
+*/
+
+def masterversion = "unknown"
+def deploy_environment = "unknown"
+master_versions_location_base = """gs://fdk-infra-masterversions"""
+
+def get_masterversion_location(selected_env) {
+  def env_location = [ "ut1": "${master_versions_location_base}/develop"
+                      ,"st1": "${master_versions_location_base}/deployed/ut1"
+                      ,"it1": "${master_versions_location_base}/deployed/st1"
+                      ]
+  if (env_location.containsKey(selected_env)) {
+    return env_location[selected_env]
+  }
+  return ""
+}
+
+import org.jenkinsci.plugins.workflow.cps.CpsThread
+import org.jenkinsci.plugins.workflow.actions.LabelAction
+
+// A hack to create a named script output stage.  For some reason Jenkins
+// does not want to name script steps, so this hack is used.
+// ref: https://stackoverflow.com/questions/39414921/jenkins-pipeline-sh-display-name-label
+def script_wrapper(def Map vars) {
+  def script = vars["script"]
+  def stepName = vars["stepName"]
+  def returnStatus = vars.get("returnStatus")
+  def output
+  try{
+      if (returnStatus) {
+        def inner = sh(script: script,returnStatus: true)
+        output = inner
+      } else {
+        def inner = sh(script: script,returnStdout: true)
+        output = inner
+      }
+  } finally {
+      CpsThread.current().head.get().addAction(new LabelAction("Shell script ${stepName} "))
+  }
+  return output
+}
+
+
+def hash_to_masterversion(String sha) {
+  def output = sh (returnStdout: true,
+                   script: "gsutil ls ${master_versions_location}/*${sha}*")
+  def versions = output.tokenize( '\n' )
+  def version = ""
+
+  // gsutil ls prints in lexial order, so newest is last.
+  versions.reverseEach {
+    def line = it
+    echo "Evaluating ${line}"
+    def result = (line =~ /^$master_versions_location\/(.+)\.yaml$/)
+    if (result) {
+      version = result[0][1]
+    }
+  }
+  return version
+}
+
+// Needs to be in a separate function because it uses regexp, which is not
+// serializable.  Function cannot call sh itself, so returs strings that should
+// be executed by caller.
+@NonCPS
+def generate_tag_commands(def outputImagesToTag, def de) {
+  def tag_commands = []
+
+  def yearmonthdatehhmm = new Date().format( 'yyyyMMdd_HHmm' )
+  outputImagesToTag.eachLine {
+    def line = it
+    def service_and_tag = (line =~ /^eu.gcr.io\/fdk-infra\/(.*?):(.*?)$/)
+    if (service_and_tag) {
+      def service = service_and_tag[0][1]
+      def tag = service_and_tag[0][2]
+      tag_commands.add("gcloud -q container images add-tag ${line} eu.gcr.io/fdk-infra/${service}:env_${de}_latest")
+      tag_commands.add("gcloud -q container images add-tag ${line} eu.gcr.io/fdk-infra/${service}:env_${de}_${yearmonthdatehhmm}")
+    }
+  }
+  return tag_commands
+}
+
+stage('Getting versions and environment') {
+  if ("${params.deploy_environment}" == "") {
+    error("No valid enironment selected, gonna fail the deploy.")
+  } else {
+    // global scope
+    deploy_environment = params.deploy_environment
+  }
+  // global scope
+  master_versions_location = get_masterversion_location(deploy_environment)
+  if (master_versions_location == "") {
+    error("Not supporting dynamic environments (${deploy_environment}) yet.")
+  }
+  if ("${params.masterversion}" == "") {
+      echo "No Masterversion supplied, will ask user."
+      def choices = ""
+      node('helm-kubectl') {
+        def inner_choices = ""
+        container('helm-gcloud-kubectl') {
+
+          def output = sh (returnStdout: true,
+                           script: "gsutil ls ${master_versions_location}/")
+          def versions = output.tokenize( '\n' )
+
+          // gsutil ls prints in lexial order, so newest is last.
+          versions.reverseEach {
+            def line = it
+            // gs://fdk-infra-masterversions/all/20181025-ci-cd-a368fb8ab852e679cba7b601d6d7f3c42af27d71.yaml
+            def result = (line =~ /^$master_versions_location\/(.*)\.yaml$/)
+            if (result) {
+              def v_all = result[0][1]
+              inner_choices = inner_choices + "${v_all}" + "\n"
+            }
+          }
+        }
+        choices = inner_choices
+      }
+      stage ('Select version'){
+          timeout(time: 600, unit: 'SECONDS') {
+            masterversion = input(id: 'userInput',
+                                message: 'Select your choice (newer versions showed first)',
+                                parameters: [ [$class: 'ChoiceParameterDefinition',
+                                                choices: choices,
+                                                description: '',
+                                                name: ''] ])
+        }
+      }
+  } else {
+      masterversion = "${params.masterversion}"
+  }
+  if (params.force == true) {
+    echo "Forcing deploy even if its already deployed."
+  }
+  echo "Using masterversion ${masterversion} and env ${deploy_environment}"
+  currentBuild.displayName = "${deploy_environment} - Deploy: ${masterversion}"
+}
+
+node ('helm-kubectl'){
+  container('helm-gcloud-kubectl') {
+    stage('Verify Masterversion exists') {
+      def sha = masterversion
+      masterversion = hash_to_masterversion(sha)
+      if (masterversion == "") {
+        error("Unable to deploy, not able to find the masterversion specified! ${sha}")
+      }
+    }
+    stage("Check what is deployed") {
+      if (!params.force) {
+        def exist = script_wrapper(stepName: "Check what is deployed.",
+                       script: "gsutil ls ${master_versions_location_base}/deployed/${deploy_environment}/current/${masterversion}* > /dev/null 2>&1",
+                       returnStatus: true)
+
+        // Maybe this should be a failure instead??
+        if (exist== 0) {
+          echo "The version you are trying to deploy is already deployed.  Rerun with force=true if you want to skip this check."
+          currentBuild.result = 'SUCCESS'
+          currentBuild.description = "The version you are trying to deploy is already deployed.  Rerun with force=true if you want to skip this check."
+          return
+        }
+      }
+    }
+
+    stage('Grab Masterversion') {
+      withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+      }
+      // Copy the masrterversion to this jenkins node. Altså copy it to deployed and current folder for this env,
+      sh returnStatus: true, script: "gsutil cp ${master_versions_location}/${masterversion}.yaml ."
+    } // stage: tag version
+
+    stage('Authenticating with cluster and helming') {
+      configFileProvider([configFile(fileId: "${deploy_environment}_values.yaml", variable: 'VALUES')]) {
+        sh returnStatus: true, script: 'cp $VALUES ${WORKSPACE}/values_environment.yaml'
+      }
+      configFileProvider([configFile(fileId: 'fdk-dev-serviceaccount', variable: 'SA')]) {
+        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+      }
+      sh(returnStatus: true,
+        script: """
+        gcloud config set project fdk-dev
+        gcloud container clusters get-credentials fdk-dev --region europe-north1-a
+        gcloud config set compute/region europe-north1-a
+        gcloud config set compute/zone europe-north1
+        """)
+      sh returnStatus: true, script: 'git clone https://github.com/Informasjonsforvaltning/fdk-config.git'
+      sh returnStatus: true, script: "helm template -f values_environment.yaml -f ${masterversion}.yaml fdk-config/helm/ > kubectlapply.yaml"
+      sh returnStatus: true, script: 'cat kubectlapply.yaml'
+    } // stage Authenticating wiht cluster
+
+    stage('Deploy') {
+      sh returnStatus: true, script: "gsutil cp kubectlapply.yaml gs://fdk-dev-kubectl/${deploy_environment}-${BUILD_ID}.yaml"
+      sh returnStatus: true, script: 'kubectl apply -f kubectlapply.yaml'
+    } // stage: deploy
+
+    stage('Tagging version') {
+      withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+      }
+      def tag_script = "gsutil cp ${master_versions_location}/${masterversion}.yaml ."
+      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/${masterversion}.yaml"
+
+      tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/rollback/* 2>/dev/null || true"
+      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location_base}/deployed/${deploy_environment}/current/* ${master_versions_location_base}/deployed/${deploy_environment}/rollback/  2>/dev/null || true"
+
+      tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/current/* 2>/dev/null || true"
+      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/current/${masterversion}.yaml"
+
+      def outputImagesToTag = script_wrapper (returnStdout: true,
+                                              script: "cat ${masterversion}.yaml | grep -o 'eu.gcr.io/fdk-infra.*'",
+                                              stepName: "Show fdk services only")
+      def tag_commands = generate_tag_commands(outputImagesToTag, deploy_environment)
+      tag_commands.each{
+        tag_script = tag_script + "\n" + it
+      }
+      script_wrapper(returnStdout: true,
+                     script: tag_script,
+                     stepName: "Tag Masterversion")
+    } // stage: tag version
+    stage("Notify slack") {
+      slackSend   channel: '#jenkins',
+                  color: '#7f7fff',
+                  message: "${deploy_environment}: New version deployed! ${masterversion}- url: tbd.."
+    }
+  }
+}
