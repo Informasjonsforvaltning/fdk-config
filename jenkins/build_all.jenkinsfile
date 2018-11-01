@@ -126,7 +126,7 @@ node ('helm-kubectl'){
       currentBuild.result = 'SUCCESS'
       return
     }
-    if (name == null) {
+    if (!env.getEnvironment().containsKey("name")) {
       wrap([$class: 'BuildUser']) {
         name = BUILD_USER
       }
