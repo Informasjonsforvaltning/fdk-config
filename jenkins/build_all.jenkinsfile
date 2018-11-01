@@ -7,7 +7,7 @@ url = params.url
 ref = params.ref
 name = params.name
 
-echo "Rerun link: ${JOB_URL}/parambuild/?ref=${ref}&after=${after}&before=${before}"
+echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&before=${before}"
 
 // Return a list with images that has changed files in the folder.
 // This is done by checking the folder hash against image tag.
