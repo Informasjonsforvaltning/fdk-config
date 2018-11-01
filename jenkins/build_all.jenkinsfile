@@ -1,5 +1,12 @@
 @Library('utils') _
 
+// Take params from build with params.
+after = params.after
+before = params.before
+url = params.url
+ref = params.ref
+name = params.name
+
 // A check to figure out if we triggered from a webhook.
 if (!env.getEnvironment().containsKey("ref")) {
     echo "Pipeline is manually triggered, asking for needed variables!"
@@ -126,7 +133,7 @@ node ('helm-kubectl'){
       currentBuild.result = 'SUCCESS'
       return
     }
-    if (!env.getEnvironment().containsKey("name")) {
+    if (name=="") {
       wrap([$class: 'BuildUser']) {
         name = BUILD_USER
       }
