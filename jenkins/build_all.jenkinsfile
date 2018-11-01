@@ -166,7 +166,7 @@ node ('helm-kubectl'){
         } catch (e) {
           slackSend   channel: '#jenkins',
                       color: 'danger',
-                      message: "Branch: ${branch_name} failed to build. pushed by ${name} - <${currentBuild.absoluteUrl|Link}>"
+                      message: "Branch: ${branch_name} failed to build. pushed by ${name} - <${currentBuild.absoluteUrl}|Link>"
           throw e
         }
       } else {
