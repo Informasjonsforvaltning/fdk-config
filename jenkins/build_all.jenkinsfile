@@ -20,9 +20,6 @@ if (!env.getEnvironment().containsKey("ref")) {
         echo ("branch: "+refInput)
         after = userInput
         ref = refInput
-        wrap([$class: 'BuildUser']) {
-          name = BUILD_USER
-        }
     }
     //after = "d039a001f4bb639ce5c0b220fba49c31359896f1"
     //url = "https://github.com/computas/fdk"
@@ -128,6 +125,12 @@ node ('helm-kubectl'){
       echo "Dont know what to do with this.  Is this a rebase? squash?  will exit cleanly."
       currentBuild.result = 'SUCCESS'
       return
+    }
+    if (name == null) {
+      wrap([$class: 'BuildUser']) {
+        name = BUILD_USER
+      }
+      echo "name set to: ${name}"
     }
 
 
