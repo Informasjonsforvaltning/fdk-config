@@ -195,9 +195,14 @@ node ('helm-kubectl'){
                      stepName: "Tag Masterversion")
     } // stage: tag version
     stage("Notify slack") {
+      def user_trigger = "system"
+      wrap([$class: 'BuildUser']) {
+        user_trigger = BUILD_USER
+      }
+
       slackSend   channel: '#jenkins',
                   color: '#7f7fff',
-                  message: "${deploy_environment}: New version deployed! ${masterversion}- url: tbd.."
+                  message: "${deploy_environment}: ${user_trigger} deployed new version: ${masterversion}- url: tbd.."
     }
   }
 }
