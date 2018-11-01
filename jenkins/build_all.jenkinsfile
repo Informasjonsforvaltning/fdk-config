@@ -213,7 +213,7 @@ node ('helm-kubectl'){
           sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
         }
         checksums.each{ key, value ->
-          String commands = [
+          def commands = [
           "gcloud -q container images add-tag eu.gcr.io/fdk-infra/${key}:${value} eu.gcr.io/fdk-infra/${key}:branch_${branch_name}_${yearmonthdate}",
           "gcloud -q container images add-tag eu.gcr.io/fdk-infra/${key}:${value} eu.gcr.io/fdk-infra/${key}:branch_${branch_name}_latest"
           ]
