@@ -265,6 +265,7 @@ def buildProject(String app, String checksum, String compile, String branch_name
         container('java-docker') {
           nodejs(nodeJSInstallationName: 'fdk-node') {
             sh "npm config set unsafe-perm true"
+            echo "Gonna execute: ${compile}"
             sh "(${compile})"
           }
         }
