@@ -204,5 +204,8 @@ node ('helm-kubectl'){
                   color: '#7f7fff',
                   message: "${deploy_environment}: ${user_trigger} deployed new version: ${masterversion}- url: tbd.."
     }
+    stage("Generate env version files") {
+      build job: 'create-version-overview', wait: false
+    }
   }
 }

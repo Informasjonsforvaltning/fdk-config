@@ -187,7 +187,7 @@ node ('helm-kubectl'){
     // TODO: maybe only need tagging for develop and master?
     stage('Tag images') {
       String yearmonthdate = global_ymd
-      def slack_msg = "<${BUILD_URL}|${currentBuild.displayName}> was just built!"
+      def slack_msg = "<${BUILD_URL}|${currentBuild.displayName}> by ${name} was just built!"
       if (branch_ref == 'heads/develop') {
         slack_msg = slack_msg + " - <http://jenkins.jx.35.228.143.30.nip.io/job/deploy/job/deploy-development/parambuild/?masterversion=${after}|Deploy now>"
       } else {
