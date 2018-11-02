@@ -121,20 +121,42 @@ node ('helm-kubectl'){
     //currentBuild.description = "fooDescription"
 
     stage('Calculate what to build') {
-      def mikrotjenester_map = ["registration-react": "cd applications/registration-react && ./travisBuild.sh",
-                 "search": "cd applications/search && ./travisBuild.sh",
-                 "fuseki": "maven",
-                 "harvester": "maven",
-                 "harvester-api": "maven",
-                 "nginx-search": "maven",
-                 "nginx-registration": "maven",
-                 "reference-data": "maven",
-                 "registration-api": "maven",
-                 "registration-auth": "maven",
-                 "api-cat": "maven",
-                 "elasticsearch-copy": "maven",
-                 "search-api":"maven"]
+      checkout ( [$class: 'GitSCM',
+          branches: [[name: after ]],
+          userRemoteConfigs: [[
+              credentialsId: 'systemjenkinsfdk',
+              url: url]]])
 
+      output = wrapper.script(script:'''#!/usr/bin/env bash
+set -e
+source ./buildGroupsEnv.sh
+for i in "${!BUILD_APPS[@]}"; do
+    echo "${BUILD_APPS[$i]} ${BUILD_CMD[$i]}"
+done
+''', returnStdout:true, stepName: "yeah")
+
+      lines = output.tokenize('\n')
+      def mikrotjenester_map = [:]
+      lines.each{ line ->
+        def line_tokens = line.split(' ')
+        def service = line_tokens[0]
+        def build_instructions = line_tokens.drop(1).join(' ')
+        mikrotjenester_map[service] = build_instructions
+      }
+      /*def mikrotjenester_map = ["registration-react": "cd applications/registration-react && ./travisBuild.sh",
+                 "search": "cd applications/search && ./travisBuild.sh",
+                 "fuseki": "mvn",
+                 "harvester": "mvn",
+                 "harvester-api": "mvn",
+                 "nginx-search": "mvn",
+                 "nginx-registration": "mvn",
+                 "reference-data": "mvn",
+                 "registration-api": "mvn",
+                 "registration-auth": "mvn",
+                 "api-cat": "mvn",
+                 "elasticsearch-copy": "mvn",
+                 "search-api":"mvn"]
+*/
       checksums = do_checksums(mikrotjenester_map)
       global_ymd = get_version_timestamp(after)
 
@@ -233,17 +255,16 @@ def buildProject(String app, String checksum, String compile, String branch_name
         }
     }
     stage("Build ${app}") {
-      if (compile == 'maven'){
+      if (compile.startsWith('maven')){
         container('java-docker') {
             withMaven(maven: 'M3') {
-              sh "mvn clean install -B -T 2C --projects applications/${app} --also-make"
+              sh compile
             }
         } // container
       } else {
         container('java-docker') {
           nodejs(nodeJSInstallationName: 'fdk-node') {
-            sh 'npm config set unsafe-perm true'
-            sh "(${compile})"
+            sh "npm config set unsafe-perm true\n${compile}"
           }
         }
       }
