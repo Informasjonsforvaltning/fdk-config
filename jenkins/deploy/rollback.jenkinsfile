@@ -10,6 +10,7 @@ Note that you can only rollback once.
 master_versions_location_base = """gs://fdk-infra-masterversions"""
 
 echo "Rolling back to previous version for env " + params.rollback_environment
+currentBuild.displayName = "${currentBuild.number} - ${params.rollback_environment}: Rollback"
 String masterversion = "unknown"
 node ('helm-kubectl'){
   container('helm-gcloud-kubectl') {
