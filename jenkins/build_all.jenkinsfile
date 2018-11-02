@@ -255,7 +255,7 @@ def buildProject(String app, String checksum, String compile, String branch_name
         }
     }
     stage("Build ${app}") {
-      if (compile.startsWith('maven')){
+      if (compile.startsWith('mvn')){
         container('java-docker') {
             withMaven(maven: 'M3') {
               sh compile
