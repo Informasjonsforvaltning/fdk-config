@@ -63,6 +63,15 @@ def get_version_timestamp(def sha_version) {
   return git_time.replace(":", "_").take(19).trim()
 }
 
+def get_git_shorthash(String hash) {
+  def git_shorthash = wrapper.script (
+      script: "git rev-parse --short ${hash}",
+      returnStdout: true,
+      stepName: "Get shorthash"
+  ).trim()
+  return git_shorthash
+}
+
 def service_to_template_name(service) {
   String img_underscore = service.replaceAll('-','_')
   String template_name = img_underscore.toUpperCase() + "_IMAGE"
@@ -87,6 +96,7 @@ node ('helm-kubectl'){
     String branch_name = "unknown"
     String branch_ref = "unknown"
     String global_ymd = '00001224_1200'
+    def after_short = after
     String build_masterversion_location = ""
     def ref_tokens = ref.tokenize( '/' )
     if (ref_tokens.size() > 1) {
@@ -133,7 +143,7 @@ source ./buildGroupsEnv.sh
 for i in "${!BUILD_APPS[@]}"; do
     echo "${BUILD_APPS[$i]} ${BUILD_CMD[$i]}"
 done
-''', returnStdout:true, stepName: "yeah")
+''', returnStdout:true, stepName: "generate list of build targets")
 
       lines = output.tokenize('\n')
       def mikrotjenester_map = [:]
@@ -143,20 +153,8 @@ done
         def build_instructions = line_tokens.drop(1).join(' ')
         mikrotjenester_map[service] = build_instructions
       }
-      /*def mikrotjenester_map = ["registration-react": "cd applications/registration-react && ./travisBuild.sh",
-                 "search": "cd applications/search && ./travisBuild.sh",
-                 "fuseki": "mvn",
-                 "harvester": "mvn",
-                 "harvester-api": "mvn",
-                 "nginx-search": "mvn",
-                 "nginx-registration": "mvn",
-                 "reference-data": "mvn",
-                 "registration-api": "mvn",
-                 "registration-auth": "mvn",
-                 "api-cat": "mvn",
-                 "elasticsearch-copy": "mvn",
-                 "search-api":"mvn"]
-*/
+      after_short = get_git_shorthash(after)
+      
       checksums = do_checksums(mikrotjenester_map)
       global_ymd = get_version_timestamp(after)
 
@@ -209,7 +207,7 @@ done
     // TODO: maybe only need tagging for develop and master?
     stage('Tag images') {
       String yearmonthdate = global_ymd
-      def slack_msg = "<${BUILD_URL}|${currentBuild.displayName}> by ${name} was just built!"
+      def slack_msg = "<${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built!"
       if (branch_ref == 'heads/develop') {
         slack_msg = slack_msg + " - <http://jenkins.jx.35.228.143.30.nip.io/job/deploy/job/deploy-development/parambuild/?masterversion=${after}|Deploy now>"
       } else {
