@@ -154,7 +154,7 @@ done
         mikrotjenester_map[service] = build_instructions
       }
       after_short = get_git_shorthash(after)
-      
+
       checksums = do_checksums(mikrotjenester_map)
       global_ymd = get_version_timestamp(after)
 
@@ -209,7 +209,7 @@ done
       String yearmonthdate = global_ymd
       def slack_msg = "<${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built!"
       if (branch_ref == 'heads/develop') {
-        slack_msg = slack_msg + " - <http://jenkins.jx.35.228.143.30.nip.io/job/deploy/job/deploy-development/parambuild/?masterversion=${after}|Deploy now>"
+        slack_msg = slack_msg + " - <${JENKINS_URL}job/deploy/job/deploy/parambuild/?masterversion=${after}|Deploy now>"
       } else {
         slack_msg = slack_msg + " - Not supporting deploy for this branch.  <https://storage.cloud.google.com/${build_masterversion_location}|View masterversion>"
       }
