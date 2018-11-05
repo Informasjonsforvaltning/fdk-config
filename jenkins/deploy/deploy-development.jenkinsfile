@@ -18,6 +18,13 @@ def get_masterversion_location(selected_env) {
   return ""
 }
 
+def get_project_fom_env(def env){
+  if (env=="prod") {
+    return "fdk-prod"
+  }
+  return "fdk-dev"
+}
+
 def hash_to_masterversion(String sha) {
   def output = sh (returnStdout: true,
                    script: "gsutil ls ${master_versions_location}/*${sha}*")
@@ -114,6 +121,7 @@ stage('Getting versions and environment') {
 }
 
 node ('helm-kubectl'){
+  def gcp_project_name = get_project_fom_env(deploy_environment)
   container('helm-gcloud-kubectl') {
     stage('Verify Masterversion exists') {
       def sha = masterversion
@@ -150,13 +158,16 @@ node ('helm-kubectl'){
       configFileProvider([configFile(fileId: "${deploy_environment}_values.yaml", variable: 'VALUES')]) {
         sh returnStatus: true, script: 'cp $VALUES ${WORKSPACE}/values_environment.yaml'
       }
-      configFileProvider([configFile(fileId: 'fdk-dev-serviceaccount', variable: 'SA')]) {
+      /*configFileProvider([configFile(fileId: "${gcp_project_name}-serviceaccount", variable: 'SA')]) {
+        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+      }*/
+      withCredentials([file(credentialsId: "${gcp_project_name}-k8s", variable: 'SA')]) {
         sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
       }
       sh(returnStatus: true,
         script: """
-        gcloud config set project fdk-dev
-        gcloud container clusters get-credentials fdk-dev --region europe-north1-a
+        gcloud config set project """ + gcp_project_name + """
+        gcloud container clusters get-credentials """ + gcp_project_name + """ --region europe-north1-a
         gcloud config set compute/region europe-north1-a
         gcloud config set compute/zone europe-north1
         """)
@@ -166,7 +177,7 @@ node ('helm-kubectl'){
     } // stage Authenticating wiht cluster
 
     stage('Deploy') {
-      sh returnStatus: true, script: "gsutil cp kubectlapply.yaml gs://fdk-dev-kubectl/${deploy_environment}-${BUILD_ID}.yaml"
+      sh returnStatus: true, script: "gsutil cp kubectlapply.yaml gs://${gcp_project_name}-kubectl/${deploy_environment}-${BUILD_ID}.yaml"
       sh returnStatus: true, script: 'kubectl apply -f kubectlapply.yaml'
     } // stage: deploy
 
