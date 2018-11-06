@@ -26,17 +26,17 @@ spec:
             memory: {{ required "Missing value FDK_NGINX_REGISTRATION_MEMORY" .Values.FDK_NGINX_REGISTRATION_MEMORY | quote }}
         livenessProbe:
           httpGet:
-            path: /login
+            path: /health
             port: 8080
-          initialDelaySeconds: 120
+          initialDelaySeconds: 20
           periodSeconds: 30
           successThreshold: 1
           failureThreshold: 5
         readinessProbe:
           httpGet:
-            path: /login
+            path: /health
             port: 8080
-          initialDelaySeconds: 120
+          initialDelaySeconds: 20
           periodSeconds: 30
           successThreshold: 1
           failureThreshold: 5
