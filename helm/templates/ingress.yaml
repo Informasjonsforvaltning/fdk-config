@@ -24,6 +24,13 @@ spec:
         backend:
           serviceName: nginx-search
           servicePort: 8080
+  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_HARVESTER" .Values.FDK_INGRESS_HOSTNAME_HARVESTER }}
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: harvester
+          servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
     http:
       paths:
@@ -35,6 +42,7 @@ spec:
   - hosts:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_REG" .Values.FDK_INGRESS_HOSTNAME_REG }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_WWW" .Values.FDK_INGRESS_HOSTNAME_WWW }}
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_HARVESTER" .Values.FDK_INGRESS_HOSTNAME_HARVESTER }}
     secretName: {{ required "Missing value FDK_CERT_NAME_ENV" .Values.FDK_CERT_NAME_ENV }}
   - hosts:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
