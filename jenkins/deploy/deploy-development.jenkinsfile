@@ -181,6 +181,30 @@ node ('helm-kubectl'){
       sh returnStatus: true, script: 'cat kubectlapply.yaml'
     } // stage Authenticating wiht cluster
 
+    if (deploy_environment=='prod') {
+      stage('Backup') {
+        def dateFormat = new SimpleDateFormat("yyyyMMddHHmm")
+        def date = new Date()
+
+        def backup_label = "${BUILD_ID}_" + dateFormat.format(date)
+        def backupscript = """
+            gcloud compute --project fdk-prod disks snapshot "fdk-prod-elasticsearch5" --snapshot-names "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --zone "europe-north1-a"
+            gcloud compute --project fdk-prod disks snapshot "fdk-prod-fuseki" --snapshot-names "autogcs-autodeploy-prod-fuseki-${backup_label}" --zone "europe-north1-a"
+            gcloud compute --project fdk-prod disks snapshot "fdk-prod-registration-api" --snapshot-names "autogcs-autodeploy-prod-registration-api-${backup_label}" --zone "europe-north1-a"
+            gcloud compute --project fdk-prod disks snapshot "fdk-prod-reference-data" --snapshot-names "autogcs-autodeploy-prod-reference-data-${backup_label}" --zone "europe-north1-a"
+
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --labels="snapshotdays="14""
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-fuseki-${backup_label}" --labels="snapshotdays="14""
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-registration-api-${backup_label}" --labels="snapshotdays="14""
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-reference-data-${backup_label}" --labels="snapshotdays="14"" """
+            echo "Running: " + backupscript
+
+            wrapper.script(stepName: "Backup prod.",
+                           script: backupscript,
+                           returnStatus: true)
+      }
+    }
+
     stage('Deploy') {
       sh returnStatus: true, script: "gsutil cp kubectlapply.yaml gs://${gcp_project_name}-kubectl/${deploy_environment}-${BUILD_ID}.yaml"
       sh returnStatus: true, script: 'kubectl apply -f kubectlapply.yaml'
