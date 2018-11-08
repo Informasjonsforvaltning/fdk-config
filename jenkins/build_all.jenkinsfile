@@ -6,6 +6,7 @@ before = params.before
 url = params.url
 ref = params.ref
 name = params.name
+force = params.force
 
 echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&before=${before}"
 
@@ -125,6 +126,9 @@ node ('helm-kubectl'){
       }
       echo "name set to: ${name}"
     }
+    if (force) {
+      echo "Doing full rebuild."
+    }
 
 
     currentBuild.displayName = "${currentBuild.number} - ${branch_name}"
@@ -158,7 +162,15 @@ done
       checksums = do_checksums(mikrotjenester_map)
       global_ymd = get_version_timestamp(after)
 
-      def images_to_build = check_all_images(checksums)
+      def images_to_build = []
+      if (force) {
+        echo "Forcing.."
+        checksums.each{service, checksum ->
+          images_to_build.add(service)
+        }
+      } else {
+        images_to_build = check_all_images(checksums)
+      }
       images_to_build.each{service ->
         echo "gonna build ${service}"
         def compile = mikrotjenester_map[service]
@@ -168,6 +180,25 @@ done
 
       values_images_text = get_values_images_text(checksums)
     } // stage: Calculate what to..
+
+    stage('Check if PR') {
+      container('helm-gcloud-kubectl') {
+        withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+          sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+        }
+        def found = sh(returnStatus: true, script: "gsutil cp gs://fdk-infra-jenkins/pr/${after} .")
+        if (found==0) {
+          try {
+            echo "Found PR data for this build"
+            def payload = readFile(file:after)
+            echo payload
+          } catch (e) {
+            
+          }
+        }
+      }
+    }
+
     stage('Build') {
       if (bygg_mikrotjenester.size() > 0) {
         try {
