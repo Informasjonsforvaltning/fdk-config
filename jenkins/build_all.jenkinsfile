@@ -235,7 +235,7 @@ done
           slackSend   channel: '#jenkins',
                       color: 'danger',
                       message: "Branch: ${branch_name} (${after_short}) by ${name} failed to build. <${currentBuild.absoluteUrl}|Link>"
-          pr_status("error", after, "Build does not compile!", currentBuild.absoluteUrl)
+          pr_status("error", after, "Build failed!", currentBuild.absoluteUrl)
           throw e
         }
       } else {
