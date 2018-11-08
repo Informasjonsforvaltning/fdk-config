@@ -190,10 +190,18 @@ done
         if (found==0) {
           try {
             echo "Found PR data for this build"
-            def payload = readFile(file:after)
-            echo payload
+            def payload_lines = readFile(file:after).split('\n')
+            def pr_values = [:]
+            payload_lines.each{ s ->
+              def key = s.tokenize(":")[0]
+              def value = s.tokenize(":").drop(1).join(":")
+              pr_values[key] = value
+            }
+            if (pr_values.containsKey("pull_request_url")) {
+              echo "pull_request_url is " + pr_values[pull_request_url]
+            }
           } catch (e) {
-            
+
           }
         }
       }
