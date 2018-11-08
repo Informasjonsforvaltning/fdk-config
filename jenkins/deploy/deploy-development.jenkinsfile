@@ -183,10 +183,9 @@ node ('helm-kubectl'){
 
     if (deploy_environment=='prod') {
       stage('Backup') {
-        def dateFormat = new SimpleDateFormat("yyyyMMddHHmm")
-        def date = new Date()
+        def yearmonthdate = (new Date() - min_days).format( 'yyyy-MM-dd' )
 
-        def backup_label = "${BUILD_ID}_" + dateFormat.format(date)
+        def backup_label = "${BUILD_ID}_" + yearmonthdate
         def backupscript = """
             gcloud compute --project fdk-prod disks snapshot "fdk-prod-elasticsearch5" --snapshot-names "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --zone "europe-north1-a"
             gcloud compute --project fdk-prod disks snapshot "fdk-prod-fuseki" --snapshot-names "autogcs-autodeploy-prod-fuseki-${backup_label}" --zone "europe-north1-a"
