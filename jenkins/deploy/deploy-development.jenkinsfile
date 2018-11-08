@@ -146,9 +146,9 @@ node ('helm-kubectl'){
 
         // Maybe this should be a failure instead??
         if (exist== 0) {
-          echo "The version you are trying to deploy is already deployed.  Rerun with force=true if you want to skip this check."
-          currentBuild.result = 'SUCCESS'
           currentBuild.description = "The version you are trying to deploy is already deployed.  Rerun with force=true if you want to skip this check."
+          currentBuild.result = 'ABORTED'
+          error("The version you are trying to deploy is already deployed.  Rerun with force=true if you want to skip this check.")
           return
         }
       }
