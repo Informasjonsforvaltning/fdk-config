@@ -206,9 +206,10 @@ done
         }
         def found = sh(returnStatus: true, script: "gsutil cp gs://fdk-infra-jenkins/pr/${after} .")
         if (found==0) {
+          currentBuild.displayName = currentBuild.displayName + " [PR]"
           try {
             echo "Found PR data for this build"
-            def payload_lines = readFile(file:after).split('\n')
+            def payload_lines = readFile(after).split('\n')
             def pr_values = [:]
             payload_lines.each{ s ->
               def key = s.tokenize(":")[0]
@@ -218,7 +219,6 @@ done
             if (pr_values.containsKey("pull_request_url")) {
               pull_request_url = pr_values["pull_request_url"]
               echo "pull_request_url is " + pull_request_url
-              currentBuild.displayName = currentBuild.displayName + " [PR]"
             }
           } catch (e) {
 
