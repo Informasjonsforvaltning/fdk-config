@@ -253,6 +253,8 @@ done
       def slack_msg = "<${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built in " + currentBuild.durationString
       if (branch_ref == 'heads/develop') {
         slack_msg = slack_msg + " - <${JENKINS_URL}job/deploy-scripts/job/deploy/parambuild/?masterversion=${after}|Deploy now>"
+        build job: 'autodeploy_from_development', wait: false , parameters: [[$class: 'StringParameterValue', name: 'after', value: after]]
+
       } else {
         slack_msg = slack_msg + " - Not supporting deploy for this branch.  <https://storage.cloud.google.com/${build_masterversion_location}|View masterversion>"
       }
