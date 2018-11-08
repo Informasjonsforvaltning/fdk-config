@@ -11,6 +11,23 @@ pull_request_url = ""
 
 echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&before=${before}"
 
+def pr_status(def status, def sha, def text, def t_url, def context = "continuous-integration/jenkins") {
+    // status error, failure, pending, success
+    def pr_url = "https://api.github.com/repos/Informasjonsforvaltning/fdk/statuses/" + sha
+    def body = """{
+  "state": "$status",
+  "target_url": "$t_url",
+  "description": "$text",
+  "context": "$context"
+}"""
+    try {
+        httpRequest authentication: "jenkins-github", httpMode: 'POST', requestBody: body,  url: pr_url
+    } catch (e) {
+        echo "Failed updating status of " + sha
+    }
+}
+
+pr_status("pending", after, "Jenkins is considering what to do..", currentBuild.absoluteUrl)
 // Return a list with images that has changed files in the folder.
 // This is done by checking the folder hash against image tag.
 def check_all_images(def service_and_hashes) {
@@ -218,6 +235,7 @@ done
           slackSend   channel: '#jenkins',
                       color: 'danger',
                       message: "Branch: ${branch_name} (${after_short}) by ${name} failed to build. <${currentBuild.absoluteUrl}|Link>"
+          pr_status("error", after, "Build does not compile!", currentBuild.absoluteUrl)
           throw e
         }
       } else {
@@ -261,7 +279,7 @@ done
       slackSend   channel: '#jenkins',
                   color: 'good',
                   message: slack_msg
-
+      pr_status("success", after, "Build is ok!", currentBuild.absoluteUrl)
       container('helm-gcloud-kubectl') {
         withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
           sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
