@@ -184,7 +184,7 @@ node ('helm-kubectl'){
 
     if (deploy_environment=='prod') {
       stage('Backup') {
-        def yearmonthdate = (new Date() - min_days).format( 'yyyy-MM-dd' )
+        def yearmonthdate = (new Date()).format( 'yyyy-MM-dd' )
 
         def backup_label = "${BUILD_ID}_" + yearmonthdate
         def backupscript = """
