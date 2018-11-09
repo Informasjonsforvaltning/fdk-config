@@ -7,7 +7,7 @@ url = params.url
 ref = params.ref
 name = params.name
 force = params.force
-pull_request_url = ""
+pull_request_url = params.pull_request_url
 
 echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&before=${before}"
 
@@ -199,32 +199,24 @@ done
       values_images_text = get_values_images_text(checksums)
     } // stage: Calculate what to..
 
-    stage('Check if PR') {
-      container('helm-gcloud-kubectl') {
-        withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
-          sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
-        }
-        def found = sh(returnStatus: true, script: "gsutil cp gs://fdk-infra-jenkins/pr/${after} .")
-        if (found==0) {
-          currentBuild.displayName = currentBuild.displayName + " [PR]"
-          try {
-            echo "Found PR data for this build"
-            def payload_lines = readFile(after).split('\n')
-            def pr_values = [:]
-            payload_lines.each{ s ->
-              def key = s.tokenize(":")[0]
-              def value = s.tokenize(":").drop(1).join(":")
-              pr_values[key] = value
-            }
-            if (pr_values.containsKey("pull_request_url")) {
-              pull_request_url = pr_values["pull_request_url"]
-              echo "pull_request_url is " + pull_request_url
-            }
-          } catch (e) {
-
+    if (pull_request_url == "") {
+      stage('Check if PR duplicate') {
+        container('helm-gcloud-kubectl') {
+          withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+            sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+          }
+          def found = sh(returnStatus: true, script: "gsutil cp gs://fdk-infra-jenkins/pr/${after} .")
+          if (found==0) {
+            currentBuild.displayName = "duplicate - ${after}"
+            currentBuild.result = 'ABORTED'
+            error("This version is already beeing built from a PR webhook.  Aborting duplicate build")
+            return
           }
         }
       }
+
+    } else {
+      currentBuild.displayName = currentBuild.displayName + " [PR]"
     }
 
     stage('Build') {
