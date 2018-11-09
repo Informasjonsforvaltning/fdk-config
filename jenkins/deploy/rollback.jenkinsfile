@@ -9,6 +9,11 @@ Note that you can only rollback once.
 
 master_versions_location_base = """gs://fdk-infra-masterversions"""
 
+if (params.rollback_environment == "prod" && params.rollback_environment != params.prod_safeword) {
+  error("You need to type ${params.rollback_environment} in prod_safeword")
+  return
+}
+
 echo "Rolling back to previous version for env " + params.rollback_environment
 currentBuild.displayName = "${currentBuild.number} - ${params.rollback_environment}: Rollback"
 String masterversion = "unknown"
