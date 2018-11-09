@@ -243,7 +243,11 @@ node ('helm-kubectl'){
     stage("Notify slack") {
       def user_trigger = "system"
       wrap([$class: 'BuildUser']) {
-        user_trigger = BUILD_USER
+        try {
+          user_trigger = BUILD_USER
+        } catch (e) {
+          echo "System is caller."
+        }
       }
       def run_url = get_url_from_env(deploy_environment)
       slackSend   channel: '#jenkins',
