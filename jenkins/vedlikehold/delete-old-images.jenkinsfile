@@ -94,10 +94,35 @@ node ('helm-kubectl'){
                      script: create_delete_script(min_days, folder_all, []).join('\n'))
 
 
-      def min_days_dev = 45
+      def min_days_dev = 15
       def folder_dev = "${master_versions_location_base}/develop"
       wrapper.script(stepName: "Deleting old files in all..",
                      script: create_delete_script(min_days_dev, folder_dev, []).join('\n'))
+    }
+
+    stage("Clean up old deployed versions") {
+      def min_days = 3
+      def folder_deplyed_ut1 = "${master_versions_location_base}/deployed/ut1/*.yaml"
+      wrapper.script(stepName: "Deleting old files in all..",
+                     script: create_delete_script(min_days, folder_deplyed_ut1, []).join('\n'))
+
+      def min_days = 3
+      def folder_deplyed_st1 = "${master_versions_location_base}/deployed/st1/*.yaml"
+      wrapper.script(stepName: "Deleting old files in all..",
+                    script: create_delete_script(min_days, folder_deplyed_st1, []).join('\n'))
+
+      def min_days = 3
+      def folder_deplyed_it1 = "${master_versions_location_base}/deployed/it1/*.yaml"
+      wrapper.script(stepName: "Deleting old files in all..",
+                    script: create_delete_script(min_days, folder_deplyed_it1, []).join('\n'))
+
+      // PROD!!
+      /*
+      def min_days = 365
+      def folder_deplyed_prod = "${master_versions_location_base}/deployed/prod/*.yaml"
+      wrapper.script(stepName: "Deleting old files in all..",
+                    script: create_delete_script(min_days, folder_deplyed_prod, []).join('\n'))
+      */
     }
   } // container
 } // node
