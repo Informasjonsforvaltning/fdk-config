@@ -106,19 +106,19 @@ node ('helm-kubectl'){
       wrapper.script(stepName: "Deleting old files in all..",
                      script: create_delete_script(min_days, folder_deplyed_ut1, []).join('\n'))
 
-      def min_days = 3
+      def min_days_st1 = 3
       def folder_deplyed_st1 = "${master_versions_location_base}/deployed/st1/*.yaml"
       wrapper.script(stepName: "Deleting old files in all..",
-                    script: create_delete_script(min_days, folder_deplyed_st1, []).join('\n'))
+                    script: create_delete_script(min_days_st1, folder_deplyed_st1, []).join('\n'))
 
-      def min_days = 3
+      def min_days_it1 = 3
       def folder_deplyed_it1 = "${master_versions_location_base}/deployed/it1/*.yaml"
       wrapper.script(stepName: "Deleting old files in all..",
-                    script: create_delete_script(min_days, folder_deplyed_it1, []).join('\n'))
+                    script: create_delete_script(min_days_it1, folder_deplyed_it1, []).join('\n'))
 
       // PROD!!
       /*
-      def min_days = 365
+      def min_days_prod = 365
       def folder_deplyed_prod = "${master_versions_location_base}/deployed/prod/*.yaml"
       wrapper.script(stepName: "Deleting old files in all..",
                     script: create_delete_script(min_days, folder_deplyed_prod, []).join('\n'))
