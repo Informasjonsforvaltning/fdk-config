@@ -38,6 +38,12 @@ def create_delete_script(def min_days, def folder, def append_script) {
   }
   return delete_script
 }
+
+def ensure_deploy_and_rollback_versions_exist(def folder) {
+  sh (returnStatus: true,script:"gsutil cp ${folder}/current/* ${folder}")
+  sh (returnStatus: true,script:"gsutil cp ${folder}/rollback/* ${folder}")
+}
+
 node ('helm-kubectl'){
   container('helm-gcloud-kubectl') {
     stage('Init') {
@@ -101,21 +107,23 @@ node ('helm-kubectl'){
     }
 
     stage("Clean up old deployed versions") {
-      def min_days = 3
+      def min_days = 7
       def folder_deplyed_ut1 = "${master_versions_location_base}/deployed/ut1/*.yaml"
       wrapper.script(stepName: "Deleting old files in all..",
                      script: create_delete_script(min_days, folder_deplyed_ut1, []).join('\n'))
+      ensure_deploy_and_rollback_versions_exist("${master_versions_location_base}/deployed/ut1")
 
-      def min_days_st1 = 3
+      def min_days_st1 = 14
       def folder_deplyed_st1 = "${master_versions_location_base}/deployed/st1/*.yaml"
       wrapper.script(stepName: "Deleting old files in all..",
                     script: create_delete_script(min_days_st1, folder_deplyed_st1, []).join('\n'))
+      ensure_deploy_and_rollback_versions_exist("${master_versions_location_base}/deployed/st1")
 
-      def min_days_it1 = 3
+      def min_days_it1 = 14
       def folder_deplyed_it1 = "${master_versions_location_base}/deployed/it1/*.yaml"
       wrapper.script(stepName: "Deleting old files in all..",
                     script: create_delete_script(min_days_it1, folder_deplyed_it1, []).join('\n'))
-
+      ensure_deploy_and_rollback_versions_exist("${master_versions_location_base}/deployed/it1")
       // PROD!!
       /*
       def min_days_prod = 365
@@ -123,6 +131,7 @@ node ('helm-kubectl'){
       wrapper.script(stepName: "Deleting old files in all..",
                     script: create_delete_script(min_days, folder_deplyed_prod, []).join('\n'))
       */
+      ensure_deploy_and_rollback_versions_exist("${master_versions_location_base}/deployed/prod")
     }
   } // container
 } // node
