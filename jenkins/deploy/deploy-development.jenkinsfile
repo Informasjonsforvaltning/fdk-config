@@ -98,9 +98,18 @@ stage('Getting versions and environment') {
         container('helm-gcloud-kubectl') {
 
           def output = sh (returnStdout: true,
-                           script: "gsutil ls ${master_versions_location}/")
-          def versions = output.tokenize( '\n' )
-
+                           script: "gsutil ls ${master_versions_location}/*.yaml")
+          def versions = output.trim().tokenize( '\n' )
+          try {
+            // Tries to sort by build build_number
+            // gs://fdk-infra-masterversions/develop/664_2018-11-13T13_56_04-7373e359d7e16d5dc82aa56d5e3cdafad15c929a.yaml
+            // gs://fdk-infra-masterversions/develop/foo/bar/123/664_2018-11-13T13_56_04-7373e359d7e16d5dc82aa56d5e3cdafad15c929a.yaml
+            // 664 is build number.
+            //
+            versions.sort{ it.minus(master_versions_location).split("_")[0].replace("-","_").split("_")[0].split("/")[-1].toInteger() }
+          } catch (e) {
+            echo "Failed custom sorting.  This means that 999 can show before 1000, etc."
+          }
           // gsutil ls prints in lexial order, so newest is last.
           versions.reverseEach {
             def line = it
