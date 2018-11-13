@@ -40,9 +40,9 @@ spec:
           value: {{ required "Missing value FDK_REGISTRATION_API_IPKEYPASSWORD" .Values.FDK_REGISTRATION_API_IPKEYPASSWORD | quote }}
         - name: registrationApi_ipStorePassword
           value: {{ required "Missing value FDK_REGISTRATION_API_IPSTOREPASSWORD" .Values.FDK_REGISTRATION_API_IPSTOREPASSWORD | quote}}
-        - name: reg_altinnServiceCode
+        - name: registrationApi_altinnServiceCode
           value: {{ required "Missing value FDK_REGISTRATION_API_ALTINNSERVICECODE" .Values.FDK_REGISTRATION_API_ALTINNSERVICECODE | quote }}
-        - name: reg_altinnServiceEdition
+        - name: registrationApi_altinnServiceEdition
           value: {{ required "Missing value FDK_REGISTRATION_API_ALTINNSERVICEEDITION" .Values.FDK_REGISTRATION_API_ALTINNSERVICEEDITION | quote }}
         - name: registrationApi_idportenMetadataFile
           value: {{ required "Missing value FDK_REGISTRATION_API_IDPORTENMETADATAFILE" .Values.FDK_REGISTRATION_API_IDPORTENMETADATAFILE | quote }}
