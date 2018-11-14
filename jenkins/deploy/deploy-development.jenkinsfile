@@ -203,15 +203,15 @@ node ('helm-kubectl'){
 
         def backup_label = "${BUILD_ID}-" + yearmonthdate
         def backupscript = """
-            gcloud compute --project fdk-prod disks snapshot "fdk-prod-elasticsearch5" --snapshot-names "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --zone "europe-north1-a"
-            gcloud compute --project fdk-prod disks snapshot "fdk-prod-fuseki" --snapshot-names "autogcs-autodeploy-prod-fuseki-${backup_label}" --zone "europe-north1-a"
-            gcloud compute --project fdk-prod disks snapshot "fdk-prod-registration-api" --snapshot-names "autogcs-autodeploy-prod-registration-api-${backup_label}" --zone "europe-north1-a"
-            gcloud compute --project fdk-prod disks snapshot "fdk-prod-reference-data" --snapshot-names "autogcs-autodeploy-prod-reference-data-${backup_label}" --zone "europe-north1-a"
-
-            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --labels="snapshotdays="14""
-            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-fuseki-${backup_label}" --labels="snapshotdays="14""
-            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-registration-api-${backup_label}" --labels="snapshotdays="14""
-            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-reference-data-${backup_label}" --labels="snapshotdays="14"" """
+            gcloud compute --project fdk-prod disks snapshot "fdk-prod-elasticsearch5" --snapshot-names "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --zone "europe-north1-a &"
+            gcloud compute --project fdk-prod disks snapshot "fdk-prod-fuseki" --snapshot-names "autogcs-autodeploy-prod-fuseki-${backup_label}" --zone "europe-north1-a &"
+            gcloud compute --project fdk-prod disks snapshot "fdk-prod-registration-api" --snapshot-names "autogcs-autodeploy-prod-registration-api-${backup_label}" --zone "europe-north1-a &"
+            gcloud compute --project fdk-prod disks snapshot "fdk-prod-reference-data" --snapshot-names "autogcs-autodeploy-prod-reference-data-${backup_label}" --zone "europe-north1-a &"
+            wait
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --labels="snapshotdays="14"" &
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-fuseki-${backup_label}" --labels="snapshotdays="14"" &
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-registration-api-${backup_label}" --labels="snapshotdays="14"" &
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-reference-data-${backup_label}" --labels="snapshotdays="14"" &"""
             echo "Running: " + backupscript
 
             wrapper.script(stepName: "Backup prod.",
@@ -230,13 +230,13 @@ node ('helm-kubectl'){
         sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
       }
       def tag_script = "gsutil cp ${master_versions_location}/${masterversion}.yaml ." // dont run in background, needed sync.
-      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/${masterversion}.yaml &"
+      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/${masterversion}.yaml"
 
-      tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/rollback/* 2>/dev/null || true &"
-      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location_base}/deployed/${deploy_environment}/current/* ${master_versions_location_base}/deployed/${deploy_environment}/rollback/ 2>/dev/null || true &"
+      tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/rollback/* 2>/dev/null || true"
+      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location_base}/deployed/${deploy_environment}/current/* ${master_versions_location_base}/deployed/${deploy_environment}/rollback/ 2>/dev/null || true"
 
-      tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/current/* 2>/dev/null || true &"
-      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/current/${masterversion}.yaml &"
+      tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/current/* 2>/dev/null || true"
+      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/current/${masterversion}.yaml"
 
       def outputImagesToTag = wrapper.script (returnStdout: true,
                                               script: "cat ${masterversion}.yaml | grep -o 'eu.gcr.io/fdk-infra.*'",
