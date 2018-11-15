@@ -96,11 +96,12 @@ def wait_for_env_to_become_running(def ns, def max_wait_seconds) {
   def i = 0
   def self_wait = 10 // seconds
   while (i*self_wait < max_wait_seconds) {
-    def scriptOut = sh(returnStdout: true, script: "kubectl get pods --field-selector=status.phase!=Running --namespace=${ns} 2>/dev/null").trim()
+    def scriptOut = sh(returnStdout: true, script: "kubectl get pods --field-selector=status.phase!=Running --namespace=${ns} | true").trim()
     if (scriptOut == "") {
       return true
     }
-    echo "Waiting ${self_wait} seconds before polling again... (max before abort:${max_wait_seconds})"
+    def cnt = scriptOut.trim().split('\n').size()
+    echo "Waiting ${self_wait} seconds for ${cnt} services to become aviable ... (max before abort:${max_wait_seconds})"
     sleep self_wait
   }
   return false
@@ -316,9 +317,9 @@ node ('helm-kubectl'){
           }
         }
         ingress_ip = ingress
-      }
-      if (ingress_ip == "") {
-        env_status = env_status + ", no known ingress!"
+        if (ingress_ip == "") {
+          env_status = env_status + ", no known ingress!"
+        }
       }
     }
     stage("Notify slack") {
@@ -335,7 +336,16 @@ node ('helm-kubectl'){
                   color: '#7f7fff',
                   message: "${deploy_environment}: ${user_trigger} deployed new version: ${masterversion}- url: ${run_url} (status: ${env_status})"
       if (tmp_env) {
-        build job: 'delete-tmp', wait: false, parameters: [[$class: 'StringParameterValue', name: 'tmp_env', value: deploy_environment]]
+        if (params.tmp_env_delete_minutes != "-1") {
+          def delete_in_minutes = "60"
+          if (params.tmp_env_delete_minutes.isNumber()) {
+            delete_in_minutes = params.tmp_env_delete_minutes
+          }
+          build job: 'delete-tmp', wait: false, parameters: [[$class: 'StringParameterValue', name: 'tmp_env', value: deploy_environment],
+                                                            [$class: 'StringParameterValue', name: 'delete_after_minutes', value: delete_in_minutes]]
+        } else {
+          echo "No env deletion scheduled."
+        }
       }
     }
     stage("Generate env version files") {

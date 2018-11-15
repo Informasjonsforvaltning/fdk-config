@@ -1,0 +1,15 @@
+// First create env
+// then run e2e tests
+// then tear down env.
+def masterversion = params.masterversion
+if (masterversion == "") {
+  error("Need to set masterversion before calling this script")
+}
+
+final deploy_to_tmp_env_job_result = build(job: 'deploy-scripts/deploy', wait: true , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: masterversion],
+                                                                                                  [$class: 'StringParameterValue', name: 'deploy_environment', value: "tmp"],
+                                                                                                  [$class: 'StringParameterValue', name: 'tmp_env_delete_minutes', value: "-1"]])
+echo "Job 1 number: ${job1Result.number}"
+def deploy_environment = "tmp-${job1Result.number}"
+final delete_e2e_env_job_result = build(job: 'deploy-scripts/delete-tmp', wait: true , parameters: [[$class: 'StringParameterValue', name: 'tmp_env', value: deploy_environment],
+                                                                                                    [$class: 'StringParameterValue', name: 'delete_after_minutes', value: "1"]])

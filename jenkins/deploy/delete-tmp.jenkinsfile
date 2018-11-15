@@ -11,9 +11,17 @@ if (!params.tmp_env.startsWith("tmp") ) {
   return
 }
 
-currentBuild.displayName = "${currentBuild.number} - ${params.tmp_env}: Delete"
+def sleep_time = 1
+if (!params.delete_after_minutes.isNumber() || params.delete_after_minutes.toInteger() == 0) {
+  sleep_time = (params.delete_after_minutes.toInteger() * 60)
+}
+if (sleep_time < 0) {
+  echo "Negative sleep time, ignoring."
+  currentBuild.result = 'ABORTED'  
+  return
+}
 
-def sleep_time = (params.delete_after_minutes.toInteger() * 60)
+currentBuild.displayName = "${currentBuild.number} - ${params.tmp_env}: Delete"
 def gcp_project_name = "fdk-e2e"
 // Long wait.
 echo "Will delte in ${params.delete_after_minutes} minutes."
