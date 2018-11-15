@@ -1,3 +1,5 @@
+@Library('utils') _
+
 master_versions_location_base = """gs://fdk-infra-masterversions"""
 
 def pr_status(def status, def sha, def text, def t_url, def context = "continuous-integration/e2e_tests") {
@@ -18,7 +20,7 @@ def pr_status(def status, def sha, def text, def t_url, def context = "continuou
 
 def hash_to_masterversion(String sha) {
   def output = sh (returnStdout: true,
-                   script: "gsutil ls ${master_versions_location}/*${sha}*")
+                   script: "gsutil ls ${master_versions_location_base}/all/*${sha}*")
   def versions = output.tokenize( '\n' )
   def version = ""
 
@@ -26,7 +28,7 @@ def hash_to_masterversion(String sha) {
   versions.reverseEach {
     def line = it
     echo "Evaluating ${line}"
-    def result = (line =~ /^$master_versions_location\/(.+)\.yaml$/)
+    def result = (line =~ /^$master_versions_location_base\/all\/(.+)\.yaml$/)
     if (result) {
       version = result[0][1]
     }
@@ -50,57 +52,79 @@ stage ('Provisioning environment') {
 }
 def test_ok = true
 
-stage ('Start tests') {
-  node('helm-kubectl') {
-    container('helm-gcloud-kubectl') {
-      def gcp_project_name = "fdk-e2e"
+try {
+  stage ('Get env details') {
+    node('helm-kubectl') {
+      container('helm-gcloud-kubectl') {
+        def gcp_project_name = "fdk-e2e"
 
-      withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
-        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
-      }
-      def full_mv = hash_to_masterversion(masterversion)
-      def mv_path = "${master_versions_location_base}/all/" + full_mv + ".yaml"
-      echo mv_path
-      // Copy the masrterversion to this jenkins node.
-      sh returnStatus: true, script: "gsutil cp ${mv_path} ."
-      sh "cat ${full_mv}.yaml"
+        withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+          sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+        }
+        def full_mv = hash_to_masterversion(masterversion)
+        def mv_path = "${master_versions_location_base}/all/" + full_mv + ".yaml"
+        echo mv_path
+        // Copy the masrterversion to this jenkins node.
+        sh returnStatus: true, script: "gsutil cp ${mv_path} ."
+        def output = sh (script: "cat ${full_mv}.yaml | grep E2E_IMAGE", returnStdout: true).trim().split(" ")
+        // Ex: E2E_IMAGE: eu.gcr.io/fdk-infra/e2e:95a51b77912ba33b3c9babe88d8695f786b6bc3c
+        e2e_image = output[1]
+        echo e2e_image
 
+        withCredentials([file(credentialsId: "${gcp_project_name}-k8s", variable: 'SA')]) {
+          sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+        }
+        sh(returnStatus: true,
+          script: """
+          gcloud config set project """ + gcp_project_name + """
+          gcloud container clusters get-credentials """ + gcp_project_name + """ --region europe-north1-a
+          gcloud config set compute/region europe-north1-a
+          gcloud config set compute/zone europe-north1
+          """)
+        ingress_ip = ""
+        def max_wait = 30
+        while (ingress_ip =="" && max_wait > 0) {
+          sleep 10
+          ingress_ip = wrapper.script(stepName: "Wait for IP",
+                                     script: "kubectl get Ingress ingress-${deploy_environment} --namespace=${deploy_environment} --template=\"{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}\" 2>/dev/null",
+                                     returnStdout: true)
+          max_wait = max_wait - 1
+          if (ingress_ip == "") {
+            echo "Still waiting for ingress to come up."
+          }
+        }
+        host_fdk = "${deploy_environment}-www.fellesdatakatalog.brreg.no"
+        reg_fdk = "${deploy_environment}-reg.fellesdatakatalog.brreg.no"
 
-      withCredentials([file(credentialsId: "${gcp_project_name}-k8s", variable: 'SA')]) {
-        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
-      }
-      sh(returnStatus: true,
-        script: """
-        gcloud config set project """ + gcp_project_name + """
-        gcloud container clusters get-credentials """ + gcp_project_name + """ --region europe-north1-a
-        gcloud config set compute/region europe-north1-a
-        gcloud config set compute/zone europe-north1
-        """)
-        def ingress_ip = wrapper.script(stepName: "Get IP",
-                                 script: "kubectl get Ingress ingress-${deploy_environment} --namespace=${deploy_environment} --template=\"{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}\" 2>/dev/null",
-                                 returnStdout: true)
-        def host_fdk = "${deploy_environment}-www.fellesdatakatalog.brreg.no"
-        def reg_fdk = "${deploy_environment}-reg.fellesdatakatalog.brreg.no"
-
+        // all these 3 are globals.
         echo ingress_ip
         echo host_fdk
         echo reg_fdk
-        // TODO: run tests here.
-        //test_ok = true/false
       }
     }
   }
-}
+  stage('Run tests') {
+    node('jenkins-maven') {
+      container('java-docker') {
+        docker.withRegistry('https://eu.gcr.io', 'gcr:fdk-infra') {
+          sh "docker run --rm ${e2e_image} echo \"hello world\""
+        }
+      }
+    }
+  }
+} catch (e) {
+  echo "Terrible! "
+  echo e.getMessage()
+  test_ok = false
 
-
-
-
-if (test_ok) {
-  pr_status("success", masterversion, "Jenkins is happy with e2e results", currentBuild.absoluteUrl)
-} else {
-  pr_status("failure", masterversion, "Jenkins is not happy with e2e results", currentBuild.absoluteUrl)
-}
-stage ('delete environment') {
-  final delete_e2e_env_job_result = build(job: 'deploy-scripts/delete-tmp', wait: true , parameters: [[$class: 'StringParameterValue', name: 'tmp_env', value: deploy_environment],
-                                                                                                    [$class: 'StringParameterValue', name: 'delete_after_minutes', value: "0"]])
+} finally {
+  if (test_ok) {
+    pr_status("success", masterversion, "Jenkins is happy with e2e results", currentBuild.absoluteUrl)
+  } else {
+    pr_status("failure", masterversion, "Jenkins is not happy with e2e results", currentBuild.absoluteUrl)
+  }
+  stage ('delete environment') {
+    final delete_e2e_env_job_result = build(job: 'deploy-scripts/delete-tmp', wait: true , parameters: [[$class: 'StringParameterValue', name: 'tmp_env', value: deploy_environment],
+                                                                                                      [$class: 'StringParameterValue', name: 'delete_after_minutes', value: "0"]])
+  }
 }
