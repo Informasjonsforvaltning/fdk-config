@@ -28,8 +28,39 @@ final deploy_to_tmp_env_job_result = build(job: 'deploy-scripts/deploy', wait: t
                                                                                                   [$class: 'StringParameterValue', name: 'tmp_env_delete_minutes', value: "-1"]])
 echo "Job number: ${deploy_to_tmp_env_job_result.number}"
 def deploy_environment = "tmp-${deploy_to_tmp_env_job_result.number}"
-
 def test_ok = true
+
+stage ('Start tests') {
+  node('helm-kubectl') {
+    container('helm-gcloud-kubectl') {
+      def gcp_project_name = "fdk-e2e"
+
+      withCredentials([file(credentialsId: "${gcp_project_name}-k8s", variable: 'SA')]) {
+        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+      }
+      sh(returnStatus: true,
+        script: """
+        gcloud config set project """ + gcp_project_name + """
+        gcloud container clusters get-credentials """ + gcp_project_name + """ --region europe-north1-a
+        gcloud config set compute/region europe-north1-a
+        gcloud config set compute/zone europe-north1
+        """)
+        def ingress = wrapper.script(stepName: "Get IP",
+                                 script: "kubectl get Ingress ingress-${deploy_environment} --namespace=${deploy_environment} --template=\"{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}\" 2>/dev/null",
+                                 returnStdout: true)
+        def host_fdk = "${deploy_environment}-www.fellesdatakatalog.brreg.no"
+        def reg_fdk = "${deploy_environment}-reg.fellesdatakatalog.brreg.no"
+
+        // TODO: run tests here.
+        //test_ok = true/false
+      }
+    }
+  }
+}
+
+
+
+
 if (test_ok) {
   pr_status("success", masterversion, "Jenkins is happy with e2e results", currentBuild.absoluteUrl)
 } else {
