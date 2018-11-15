@@ -1,15 +1,40 @@
 // First create env
 // then run e2e tests
 // then tear down env.
+def pr_status(def status, def sha, def text, def t_url, def context = "continuous-integration/e2e_tests") {
+    // status error, failure, pending, success
+    def pr_url = "https://api.github.com/repos/Informasjonsforvaltning/fdk/statuses/" + sha
+    def body = """{
+  "state": "$status",
+  "target_url": "$t_url",
+  "description": "$text",
+  "context": "$context"
+}"""
+    try {
+        httpRequest authentication: "jenkins-github", httpMode: 'POST', requestBody: body,  url: pr_url
+    } catch (e) {
+        echo "Failed updating status of " + sha
+    }
+}
+
 def masterversion = params.masterversion
+echo "Testing ${masterversion}"
 if (masterversion == "") {
   error("Need to set masterversion before calling this script")
 }
-
+pr_status("pending", masterversion, "Jenkins is doing e2e tests", currentBuild.absoluteUrl)
 final deploy_to_tmp_env_job_result = build(job: 'deploy-scripts/deploy', wait: true , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: masterversion],
                                                                                                   [$class: 'StringParameterValue', name: 'deploy_environment', value: "tmp"],
                                                                                                   [$class: 'StringParameterValue', name: 'tmp_env_delete_minutes', value: "-1"]])
-echo "Job 1 number: ${job1Result.number}"
-def deploy_environment = "tmp-${job1Result.number}"
+echo "Job number: ${deploy_to_tmp_env_job_result.number}"
+def deploy_environment = "tmp-${deploy_to_tmp_env_job_result.number}"
+
+def test_ok = true
+if (test_ok) {
+  pr_status("success", masterversion, "Jenkins is happy with e2e results", currentBuild.absoluteUrl)
+} else {
+  pr_status("failure", masterversion, "Jenkins is not happy with e2e results", currentBuild.absoluteUrl)
+}
+
 final delete_e2e_env_job_result = build(job: 'deploy-scripts/delete-tmp', wait: true , parameters: [[$class: 'StringParameterValue', name: 'tmp_env', value: deploy_environment],
                                                                                                     [$class: 'StringParameterValue', name: 'delete_after_minutes', value: "1"]])
