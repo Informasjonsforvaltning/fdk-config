@@ -12,12 +12,12 @@ if (!params.tmp_env.startsWith("tmp") ) {
 }
 
 def sleep_time = 1
-if (!params.delete_after_minutes.isNumber() || params.delete_after_minutes.toInteger() == 0) {
+if (params.delete_after_minutes.isNumber() && params.delete_after_minutes.toInteger() != 0) {
   sleep_time = (params.delete_after_minutes.toInteger() * 60)
 }
 if (sleep_time < 0) {
   echo "Negative sleep time, ignoring."
-  currentBuild.result = 'ABORTED'  
+  currentBuild.result = 'ABORTED'
   return
 }
 
