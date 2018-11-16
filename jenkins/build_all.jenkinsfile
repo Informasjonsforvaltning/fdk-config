@@ -267,6 +267,11 @@ done
       String yearmonthdate = global_ymd
 
       def slack_msg = "<${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built in " + currentBuild.durationString
+
+      // its a pull request.
+      if (pull_request_url != "") {
+          build job: 'run-e2e', wait: false , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: after]]
+      }
       if (branch_ref == 'heads/develop') {
 //        slack_msg = slack_msg + " - <${JENKINS_URL}job/deploy-scripts/job/deploy/parambuild/?masterversion=${after}|Deploy now> - btw, I already started deploying to ut1!"
         slack_msg = slack_msg + " - Started deploying version to ut1!"
