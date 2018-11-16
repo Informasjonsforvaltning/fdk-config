@@ -103,6 +103,10 @@ try {
       }
     }
   }
+  stage('Safe Wait hack.') {
+    // extra wait because the environment is "up" before its ready.
+    sleep(300)
+  }
   stage('Run tests') {
     node('jenkins-maven') {
       container('java-docker') {
@@ -113,6 +117,7 @@ try {
           echo "${ingress_ip} ${reg_fdk}" >> /etc/hosts
           export HOST_SEARCH=http://${host_fdk}
           export BROWSER=google-chrome-unstable
+          cat /etc/hosts
           npm run test:headless"""
           echo "----run.sh----"
           sh "cat run.sh"
