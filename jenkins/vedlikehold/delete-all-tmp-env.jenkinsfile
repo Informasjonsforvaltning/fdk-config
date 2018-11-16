@@ -26,6 +26,10 @@ stage ('Delete env') {
           }
         }
       }
+      // give some time to cluster to recover.
+      sleep(120)
+      // force cluster to resize down to 0
+      sh "gcloud container --project ${gcp_project_name} clusters resize ${gcp_project_name} --node-pool pool-1 --size 0 --region europe-north1-a -q"
     }
   }
 }

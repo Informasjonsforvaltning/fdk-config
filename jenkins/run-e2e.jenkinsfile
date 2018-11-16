@@ -107,13 +107,23 @@ try {
     node('jenkins-maven') {
       container('java-docker') {
         docker.withRegistry('https://eu.gcr.io', 'gcr:fdk-infra') {
-          sh "docker run --rm ${e2e_image} echo \"hello world\""
+          sh """
+          cat > run.sh <<EOF
+          echo "${ingress_ip} ${host_fdk}" >> /etc/hosts
+          echo "${ingress_ip} ${reg_fdk}" >> /etc/hosts
+          export HOST_SEARCH=http://${host_fdk}
+          export BROWSER=google-chrome-unstable
+          npm run test:headless"""
+          echo "----run.sh----"
+          sh "cat run.sh"
+          echo "--------------"
+          sh """docker run --rm ${e2e_image} bash -c "`cat run.sh`" """
         }
       }
     }
   }
 } catch (e) {
-  echo "Terrible! "
+  echo "Terrible! The e2e test failed!"
   echo e.getMessage()
   test_ok = false
 
@@ -126,5 +136,8 @@ try {
   stage ('delete environment') {
     final delete_e2e_env_job_result = build(job: 'deploy-scripts/delete-tmp', wait: true , parameters: [[$class: 'StringParameterValue', name: 'tmp_env', value: deploy_environment],
                                                                                                       [$class: 'StringParameterValue', name: 'delete_after_minutes', value: "0"]])
+  }
+  if (!test_ok) {
+    currentBuild.result = 'FAILURE'
   }
 }
