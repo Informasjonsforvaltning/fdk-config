@@ -272,7 +272,7 @@ node ('helm-kubectl'){
     }
 
     stage('Deploy') {
-      sh returnStatus: true, script: "gsutil cp kubectlapply.yaml gs://${gcp_project_name}-kubectl/${deploy_environment}-${BUILD_ID}.yaml"
+      sh returnStatus: true, script: "gsutil cp kubectlapply.yaml gs://${gcp_project_name}-kubectl/${deploy_environment}-${masterversion}-${BUILD_ID}.yaml"
       sh returnStatus: true, script: 'kubectl apply -f kubectlapply.yaml'
     } // stage: deploy
 
