@@ -105,7 +105,8 @@ try {
   }
   stage('Safe Wait hack.') {
     // extra wait because the environment is "up" before its ready.
-    sleep(300)
+    //sleep(300)
+    sleep(10)
   }
   stage('Run tests') {
     node('jenkins-maven') {
