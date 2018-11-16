@@ -343,14 +343,20 @@ except Exception as e:
   print(e)"""
       def url = get_url_from_env(deploy_environment).split(" ")[0]
       def host = get_host_from_env(deploy_environment)
-      def max_tries = 30
+      def max_tries = 60 // max 10 minutes ish.
+      def success_needed= 6  // a minute of successes
       while (max_tries > 0) {
         max_tries = max_tries -1
-        sleep(30)
+        sleep(10)
         def success = sh returnStatus:true, script: "python pollurl.py ${url} ${host}"
         if (success == 0) {
-            echo "url is reporting good!"
-            break
+            success_needed = success_needed - 1
+            echo "url is reporting good! need ${success_needed} more for setting ingress to stable!"
+            if (success_needed < 1) {
+              break
+            }
+        } else {
+          uccess_needed= 6  // reset counter on failure.
         }
       }
     }
