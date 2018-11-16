@@ -278,7 +278,7 @@ done
         build job: 'deploy-scripts/autodeploy_from_development', wait: false , parameters: [[$class: 'StringParameterValue', name: 'after', value: after]]
 
       } else {
-        slack_msg = slack_msg + " - Not supporting deploy for this branch.  <https://storage.cloud.google.com/${build_masterversion_location}|View masterversion>"
+        slack_msg = slack_msg + " - <${JENKINS_URL}job/deploy-scripts/job/deploy/parambuild/?masterversion=${after}&deploy_environment=tmp|Deploy to tmp env> .  <https://storage.cloud.google.com/${build_masterversion_location}|View masterversion>"
       }
       slackSend   channel: '#jenkins',
                   color: 'good',

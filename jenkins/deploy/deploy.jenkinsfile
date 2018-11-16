@@ -332,7 +332,7 @@ node ('helm-kubectl'){
         }
       }
       def run_url = get_url_from_env(deploy_environment)
-      slackSend   channel: '#jenkins',
+      slackSend   channel: '#jenkins-env',
                   color: '#7f7fff',
                   message: "${deploy_environment}: ${user_trigger} deployed new version: ${masterversion}- url: ${run_url} (status: ${env_status})"
       if (tmp_env) {
