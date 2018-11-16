@@ -94,12 +94,15 @@ def generate_tag_commands(def outputImagesToTag, def de) {
 
 def wait_for_env_to_become_running(def ns, def max_wait_seconds) {
   def i = 0
-  def self_wait = 10 // seconds
+  def self_wait = 30 // seconds
+  // initial minimum sleep.
+  sleep(120)
   while (i*self_wait < max_wait_seconds) {
     def scriptOut = sh(returnStdout: true, script: "kubectl get pods --field-selector=status.phase!=Running --namespace=${ns} | true").trim()
     if (scriptOut == "") {
       return true
     }
+    echo scriptOut
     def cnt = scriptOut.trim().split('\n').size()
     echo "Waiting ${self_wait} seconds for ${cnt} services to become aviable ... (max before abort:${max_wait_seconds})"
     sleep self_wait
