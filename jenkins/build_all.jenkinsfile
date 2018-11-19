@@ -9,7 +9,7 @@ name = params.name
 force = params.force
 pull_request_url = params.pull_request_url
 
-echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&before=${before}"
+echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&before=${before}&pull_request_url=${pull_request_url}"
 
 def pr_status(def status, def sha, def text, def t_url, def context = "continuous-integration/jenkins") {
     // status error, failure, pending, success
@@ -33,9 +33,13 @@ pr_status("pending", after, "Jenkins is considering what to do..", currentBuild.
 def check_all_images(def service_and_hashes) {
   String script_all = ""
   service_and_hashes.each{service, checksum ->
-    def command = "(gcloud container images describe eu.gcr.io/fdk-infra/${service}:${checksum} > /dev/null 2>&1) && echo '${service} ${checksum}' || echo '${service} YES'"
+    def command = "(gcloud container images describe eu.gcr.io/fdk-infra/${service}:${checksum} > /dev/null 2>&1) && echo '${service} ${checksum}' || echo '${service} YES' &"
     script_all = script_all + command + "\n"
   }
+  // All gcloud is spawned as separate process to speed things up, mostly network waiting.
+  // Therefore we need a wait step to wait for all requersts to be done
+  // function takes about 7-8 seconds now, compared to 4-5 seconds pr service (40+ seconds)
+  script_all = script_all + "wait\n"
   def output = ""
   container('helm-gcloud-kubectl') {
     def output_inner = wrapper.script(script: script_all, stepName: "Check what images to build")
@@ -263,12 +267,18 @@ done
       String yearmonthdate = global_ymd
 
       def slack_msg = "<${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built in " + currentBuild.durationString
+
+      // its a pull request.
+      if (pull_request_url != "") {
+          build job: 'run-e2e', wait: false , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: after]]
+      }
       if (branch_ref == 'heads/develop') {
-        slack_msg = slack_msg + " - <${JENKINS_URL}job/deploy-scripts/job/deploy/parambuild/?masterversion=${after}|Deploy now> - btw, I already started deploying to ut1!"
+//        slack_msg = slack_msg + " - <${JENKINS_URL}job/deploy-scripts/job/deploy/parambuild/?masterversion=${after}|Deploy now> - btw, I already started deploying to ut1!"
+        slack_msg = slack_msg + " - Started deploying version to ut1!"
         build job: 'deploy-scripts/autodeploy_from_development', wait: false , parameters: [[$class: 'StringParameterValue', name: 'after', value: after]]
 
       } else {
-        slack_msg = slack_msg + " - Not supporting deploy for this branch.  <https://storage.cloud.google.com/${build_masterversion_location}|View masterversion>"
+        slack_msg = slack_msg + " - <${JENKINS_URL}job/deploy-scripts/job/deploy/parambuild/?masterversion=${after}&deploy_environment=tmp|Deploy to tmp env> .  <https://storage.cloud.google.com/${build_masterversion_location}|View masterversion>"
       }
       slackSend   channel: '#jenkins',
                   color: 'good',

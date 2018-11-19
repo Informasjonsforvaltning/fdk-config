@@ -12,15 +12,18 @@ if (params.deploy_environment == "prod" && params.deploy_environment != params.p
   return
 }
 
-
-def get_masterversion_location(selected_env) {
+def get_masterversion_location(def env) {
   def env_location = [ "ut1": "${master_versions_location_base}/develop"
                       ,"st1": "${master_versions_location_base}/deployed/ut1"
                       ,"it1": "${master_versions_location_base}/deployed/st1"
                       ,"prod": "${master_versions_location_base}/deployed/it1"
                       ]
-  if (env_location.containsKey(selected_env)) {
-    return env_location[selected_env]
+  if (env_location.containsKey(env)) {
+    return env_location[env]
+  }
+  // special rule for tmp environments
+  if (env.startsWith("tmp")) {
+    return "${master_versions_location_base}/all"
   }
   return ""
 }
@@ -28,13 +31,24 @@ def get_masterversion_location(selected_env) {
 def get_project_fom_env(def env){
   if (env=="prod") {
     return "fdk-prod"
+  } else if (env.startsWith("tmp")) {
+    return "fdk-e2e"
   }
   return "fdk-dev"
 }
-
+def get_host_from_env(def env) {
+  if (env=="prod") {
+    return "www.fellesdatakatalog.brreg.no"
+  } else if (env.startsWith("tmp")) {
+    return "${env}-www.fellesdatakatalog.brreg.no"
+  }
+  return "www.${env}.fellesdatakatalog.brreg.no"
+}
 def get_url_from_env(def env) {
   if (env=="prod") {
     return "https://www.fellesdatakatalog.brreg.no/"
+  } else if (env.startsWith("tmp")) {
+    return "http://${ingress_ip} (Host: ${env}-www.fellesdatakatalog.brreg.no use ModHeader(chrome) to access.)"
   }
   return "https://www.${env}.fellesdatakatalog.brreg.no/"
 }
@@ -55,6 +69,13 @@ def hash_to_masterversion(String sha) {
     }
   }
   return version
+}
+
+def get_config_from_env(def env) {
+  if (env.startsWith("tmp")) {
+    return "e2e_values.yaml"
+  }
+  return "${env}_values.yaml"
 }
 
 // Needs to be in a separate function because it uses regexp, which is not
@@ -78,17 +99,40 @@ def generate_tag_commands(def outputImagesToTag, def de) {
   return tag_commands
 }
 
+def wait_for_env_to_become_running(def ns, def max_wait_seconds) {
+  def i = 0
+  def self_wait = 30 // seconds
+  // initial minimum sleep.
+  sleep(60)
+  while (i*self_wait < max_wait_seconds) {
+    def scriptOut = sh(returnStdout: true, script: "kubectl get pods --field-selector=status.phase!=Running --namespace=${ns} | true").trim()
+    if (scriptOut == "") {
+      return true
+    }
+    echo scriptOut
+    def cnt = scriptOut.trim().split('\n').size()
+    echo "Waiting ${self_wait} seconds for ${cnt} services to become aviable ... (max before abort:${max_wait_seconds})"
+    sleep self_wait
+  }
+  return false
+}
+
 stage('Getting versions and environment') {
   if ("${params.deploy_environment}" == "") {
     error("No valid enironment selected, gonna fail the deploy.")
   } else {
     // global scope
     deploy_environment = params.deploy_environment
+    tmp_env = false
+    if (params.deploy_environment == "tmp") {
+        deploy_environment = deploy_environment + "-" + currentBuild.number
+        tmp_env = true
+    }
   }
   // global scope
   master_versions_location = get_masterversion_location(deploy_environment)
   if (master_versions_location == "") {
-    error("Not supporting dynamic environments (${deploy_environment}) yet.")
+    error("Not supporting environment (${deploy_environment}) yet.")
   }
   if ("${params.masterversion}" == "") {
       echo "No Masterversion supplied, will ask user."
@@ -154,7 +198,7 @@ node ('helm-kubectl'){
       }
     }
     stage("Check what is deployed") {
-      if (!params.force) {
+      if (!params.force && !tmp_env) {
         def exist = wrapper.script(stepName: "Check what is deployed.",
                        script: "gsutil ls ${master_versions_location_base}/deployed/${deploy_environment}/current/${masterversion}* > /dev/null 2>&1",
                        returnStatus: true)
@@ -166,6 +210,8 @@ node ('helm-kubectl'){
           error("The version you are trying to deploy is already deployed.  Rerun with force=true if you want to skip this check.")
           return
         }
+      } else {
+        echo "Skipping stage: What is deployed."
       }
     }
 
@@ -178,8 +224,13 @@ node ('helm-kubectl'){
     } // stage: tag version
 
     stage('Authenticating with cluster and helming') {
-      configFileProvider([configFile(fileId: "${deploy_environment}_values.yaml", variable: 'VALUES')]) {
+      def configFileName = get_config_from_env(deploy_environment)
+      configFileProvider([configFile(fileId: configFileName, variable: 'VALUES')]) {
         sh returnStatus: true, script: 'cp $VALUES ${WORKSPACE}/values_environment.yaml'
+        if (tmp_env) {
+          sh "sed -i.bak s/XXe2eXX/${deploy_environment}/g ${WORKSPACE}/values_environment.yaml"
+          sh "cat ${WORKSPACE}/values_environment.yaml"
+        }
       }
 
       withCredentials([file(credentialsId: "${gcp_project_name}-k8s", variable: 'SA')]) {
@@ -221,34 +272,94 @@ node ('helm-kubectl'){
     }
 
     stage('Deploy') {
-      sh returnStatus: true, script: "gsutil cp kubectlapply.yaml gs://${gcp_project_name}-kubectl/${deploy_environment}-${BUILD_ID}.yaml"
+      sh returnStatus: true, script: "gsutil cp kubectlapply.yaml gs://${gcp_project_name}-kubectl/${deploy_environment}-${masterversion}-${BUILD_ID}.yaml"
       sh returnStatus: true, script: 'kubectl apply -f kubectlapply.yaml'
     } // stage: deploy
 
     stage('Tagging version') {
-      withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
-        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+      if (!tmp_env) {
+        withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+          sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+        }
+        def tag_script = "gsutil cp ${master_versions_location}/${masterversion}.yaml ." // dont run in background, needed sync.
+        tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/${masterversion}.yaml"
+
+        tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/rollback/* 2>/dev/null || true"
+        tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location_base}/deployed/${deploy_environment}/current/* ${master_versions_location_base}/deployed/${deploy_environment}/rollback/ 2>/dev/null || true"
+
+        tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/current/* 2>/dev/null || true"
+        tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/current/${masterversion}.yaml"
+
+        def outputImagesToTag = wrapper.script (returnStdout: true,
+                                                script: "cat ${masterversion}.yaml | grep -o 'eu.gcr.io/fdk-infra.*'",
+                                                stepName: "Show fdk services only")
+        def tag_commands = generate_tag_commands(outputImagesToTag, deploy_environment)
+        tag_commands.add("wait")
+        tag_script = tag_script + "\n" + tag_commands.join('\n')
+
+        wrapper.script(returnStdout: true,
+                       script: tag_script,
+                       stepName: "Tag Masterversion")
+
+      } else {
+        echo "Skipping version tagging for tmp environment."
       }
-      def tag_script = "gsutil cp ${master_versions_location}/${masterversion}.yaml ." // dont run in background, needed sync.
-      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/${masterversion}.yaml"
-
-      tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/rollback/* 2>/dev/null || true"
-      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location_base}/deployed/${deploy_environment}/current/* ${master_versions_location_base}/deployed/${deploy_environment}/rollback/ 2>/dev/null || true"
-
-      tag_script = tag_script + "\n" + "gsutil rm ${master_versions_location_base}/deployed/${deploy_environment}/current/* 2>/dev/null || true"
-      tag_script = tag_script + "\n" + "gsutil cp ${master_versions_location}/${masterversion}.yaml ${master_versions_location_base}/deployed/${deploy_environment}/current/${masterversion}.yaml"
-
-      def outputImagesToTag = wrapper.script (returnStdout: true,
-                                              script: "cat ${masterversion}.yaml | grep -o 'eu.gcr.io/fdk-infra.*'",
-                                              stepName: "Show fdk services only")
-      def tag_commands = generate_tag_commands(outputImagesToTag, deploy_environment)
-      tag_commands.add("wait")
-      tag_script = tag_script + "\n" + tag_commands.join('\n')
-
-      wrapper.script(returnStdout: true,
-                     script: tag_script,
-                     stepName: "Tag Masterversion")
     } // stage: tag version
+
+    def env_status = "All pods running."
+    stage('Wait for env to become ready') {
+      if (!wait_for_env_to_become_running(deploy_environment, 300)) {
+        echo "Environment readyness timed out."
+        env_status = "unstable: Not ready"
+      }
+      if (tmp_env) {
+        // wait for ingress
+        def ingress = ""
+        def max_wait = 30
+        while (ingress =="" && max_wait > 0) {
+          sleep 10
+          ingress = wrapper.script(stepName: "Wait for IP",
+                                   script: "kubectl get Ingress ingress-${deploy_environment} --namespace=${deploy_environment} --template=\"{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}\" 2>/dev/null",
+                                   returnStdout: true)
+          max_wait = max_wait - 1
+          if (ingress == "") {
+            echo "Still waiting for ingress to come up."
+          }
+        }
+        ingress_ip = ingress
+        if (ingress_ip == "") {
+          env_status = env_status + ", no known ingress!"
+        }
+      }
+      // wait for search to respond ok.
+      sh"""cat > pollurl.py <<EOF
+import sys
+import urllib2
+headers={"Host":sys.argv[2]}
+req = urllib2.Request(sys.argv[1],None,  headers)
+try:
+  response = urllib2.urlopen(req)
+except Exception as e:
+  print(e)"""
+      def url = get_url_from_env(deploy_environment).split(" ")[0]
+      def host = get_host_from_env(deploy_environment)
+      def max_tries = 60 // max 10 minutes ish.
+      def success_needed= 6  // a minute of successes
+      while (max_tries > 0) {
+        max_tries = max_tries -1
+        sleep(10)
+        def success = sh returnStatus:true, script: "python pollurl.py ${url} ${host}"
+        if (success == 0) {
+            success_needed = success_needed - 1
+            echo "url is reporting good! need ${success_needed} more for setting ingress to stable!"
+            if (success_needed < 1) {
+              break
+            }
+        } else {
+          uccess_needed= 6  // reset counter on failure.
+        }
+      }
+    }
     stage("Notify slack") {
       def user_trigger = "system"
       wrap([$class: 'BuildUser']) {
@@ -259,9 +370,21 @@ node ('helm-kubectl'){
         }
       }
       def run_url = get_url_from_env(deploy_environment)
-      slackSend   channel: '#jenkins',
+      slackSend   channel: '#jenkins-env',
                   color: '#7f7fff',
-                  message: "${deploy_environment}: ${user_trigger} deployed new version: ${masterversion}- url: ${run_url}"
+                  message: "${deploy_environment}: ${user_trigger} deployed new version: ${masterversion}- url: ${run_url} (status: ${env_status})"
+      if (tmp_env) {
+        if (params.tmp_env_delete_minutes != "-1") {
+          def delete_in_minutes = "60"
+          if (params.tmp_env_delete_minutes.isNumber()) {
+            delete_in_minutes = params.tmp_env_delete_minutes
+          }
+          build job: 'delete-tmp', wait: false, parameters: [[$class: 'StringParameterValue', name: 'tmp_env', value: deploy_environment],
+                                                            [$class: 'StringParameterValue', name: 'delete_after_minutes', value: delete_in_minutes]]
+        } else {
+          echo "No env deletion scheduled."
+        }
+      }
     }
     stage("Generate env version files") {
       build job: 'create-version-overview', wait: false
