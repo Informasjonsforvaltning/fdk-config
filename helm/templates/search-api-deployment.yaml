@@ -28,7 +28,6 @@ spec:
         name: search-api
         ports:
         - containerPort: 8080
-        - containerPort: 8181
         resources:
           requests:
             memory: {{ required "Missing value FDK_SEARCH_API_MEMORY" .Values.FDK_SEARCH_API_MEMORY | quote }}

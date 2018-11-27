@@ -28,8 +28,7 @@ spec:
         name: api-cat
         ports:
         - containerPort: 8080
-        - containerPort: 8181
-        resources: 
+        resources:
           requests:
             memory: {{ required "Missing value FDK_API_CAT_MEMORY" .Values.FDK_API_CAT_MEMORY | quote }}
       restartPolicy: Always

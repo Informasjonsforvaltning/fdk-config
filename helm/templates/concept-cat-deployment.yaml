@@ -28,8 +28,7 @@ spec:
         name: concept-cat
         ports:
         - containerPort: 8080
-        - containerPort: 8181
-        resources: 
+        resources:
           requests:
             memory: {{ required "Missing value FDK_CONCEPT_CAT_MEMORY" .Values.FDK_CONCEPT_CAT_MEMORY | quote }}
       restartPolicy: Always
