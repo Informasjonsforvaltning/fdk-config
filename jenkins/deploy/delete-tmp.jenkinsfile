@@ -24,12 +24,9 @@ if (sleep_time < 0) {
 currentBuild.displayName = "${currentBuild.number} - ${params.tmp_env}: Delete"
 def gcp_project_name = "fdk-e2e"
 // Long wait.
-echo "Will delte in ${params.delete_after_minutes} minutes."
+echo "Will delete in ${params.delete_after_minutes} minutes."
 
 stage ('Wait') {
-  slackSend   channel: '#jenkins-env',
-              color: 'good',
-              message: "${params.tmp_env} is scheduled for deletion in ${params.delete_after_minutes} minutes."
   sleep (sleep_time)
 }
 stage ('Delete env') {
@@ -48,9 +45,4 @@ stage ('Delete env') {
       sh returnStatus: true, script: "kubectl delete namespaces ${params.tmp_env}"
     }
   }
-}
-stage("Notify slack") {
-  slackSend   channel: '#jenkins-env',
-              color: 'warning',
-              message: "${params.tmp_env} has been deleted."
 }
