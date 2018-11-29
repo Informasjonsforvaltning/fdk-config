@@ -116,10 +116,10 @@ try {
           cat > run.sh <<EOF
           echo "${ingress_ip} ${host_fdk}" >> /etc/hosts
           echo "${ingress_ip} ${reg_fdk}" >> /etc/hosts
+          cat /etc/hosts
           export HOST_SEARCH=http://${host_fdk}
           export BROWSER=google-chrome-unstable
-          cat /etc/hosts
-          npm run test:headless"""
+          npm t"""
           echo "----run.sh----"
           sh "cat run.sh"
           echo "--------------"
