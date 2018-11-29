@@ -123,7 +123,7 @@ try {
           echo "----run.sh----"
           sh "cat run.sh"
           echo "--------------"
-          sh """docker run --rm -v \$(pwd)/reports:/usr/src/app/reports ${e2e_image} bash -c 'source run.sh' """
+          sh """docker run --rm -v \$(pwd)/reports:/usr/src/app/reports ${e2e_image} bash -c "`cat run.sh`" """
 
           sh """ls ./reports"""
 
