@@ -332,15 +332,15 @@ node ('helm-kubectl'){
         }
         // wait for search to respond ok.
         sh"""cat > pollurl.py <<EOF
-  import sys
-  import urllib2
-  headers={"Host":sys.argv[2]}
-  req = urllib2.Request(sys.argv[1],None,  headers)
-  try:
-    response = urllib2.urlopen(req)
-  except Exception as e:
-    print(e)
-    sys.exit(1)"""
+import sys
+import urllib2
+headers={"Host":sys.argv[2]}
+req = urllib2.Request(sys.argv[1],None,  headers)
+try:
+  response = urllib2.urlopen(req)
+except Exception as e:
+  print(e)
+  sys.exit(1)"""
         def url = get_url_from_env(deploy_environment).split(" ")[0]
         def host = get_host_from_env(deploy_environment)
         def max_tries = 60 // max 10 minutes ish.
