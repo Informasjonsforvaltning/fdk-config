@@ -125,7 +125,7 @@ try {
           echo "--------------"
           sh """docker run --rm -v \$(pwd)/reports:/usr/src/app/reports ${e2e_image} bash -c "`cat run.sh`" """
 
-          sh """ls ./reports"""
+          sh """ls  \$(pwd)/reports"""
 
           publishHTML (target: [
                   allowMissing: false,
