@@ -103,11 +103,11 @@ try {
       }
     }
   }
-  stage('Safe Wait hack.') {
-    // extra wait because the environment is "up" before its ready.
-    //sleep(300)
-    sleep(10)
-  }
+//  stage('Safe Wait hack.') {
+//    // extra wait because the environment is "up" before its ready.
+//    //sleep(300)
+//    sleep(10)
+//  }
   stage('Run tests') {
     node('jenkins-maven') {
       container('java-docker') {
@@ -123,9 +123,10 @@ try {
           echo "----run.sh----"
           sh "cat run.sh"
           echo "--------------"
-          sh """docker run --rm ${e2e_image} bash -c "`cat run.sh`" -v \$(pwd)/reports:/usr/src/app/reports """
+          sh """docker run --rm ${e2e_image} bash -c "`cat run.sh`" -v ./reports:/usr/src/app/reports """
 
-          sh """ls reports/"""
+          sh """ls reports"""
+
           publishHTML (target: [
                   allowMissing: false,
                   alwaysLinkToLastBuild: false,
