@@ -123,11 +123,9 @@ try {
           echo "----run.sh----"
           sh "cat run.sh"
           echo "--------------"
-          sh """docker run --rm ${e2e_image} bash -c "`cat run.sh`" -v ./reports:/usr/src/app/reports """
+          sh """docker run --rm ${e2e_image} bash -c "`cat run.sh`" -v \$(pwd)/reports:/usr/src/app/reports """
 
-          // Archive the built artifacts
-          archive (includes: 'reports/*.html')
-            
+          sh """ls reports/"""
           publishHTML (target: [
                   allowMissing: false,
                   alwaysLinkToLastBuild: false,
