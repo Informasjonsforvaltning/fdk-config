@@ -125,16 +125,18 @@ try {
           echo "--------------"
           sh """docker run --rm -v \$(pwd)/reports:/usr/src/app/reports ${e2e_image} bash -c "`cat run.sh`" """
 
-          sh """ls  \$(pwd)/reports"""
+          archiveArtifacts artifacts: './reports/test-report.html'
 
-          publishHTML (target: [
-                  allowMissing: false,
-                  alwaysLinkToLastBuild: false,
-                  keepAll: true,
-                  reportDir: 'reports',
-                  reportFiles: 'test-report.html',
-                  reportName: "End-to-end test report"
-          ])
+//          sh """ls  \$(pwd)/reports"""
+//
+//          publishHTML (target: [
+//                  allowMissing: false,
+//                  alwaysLinkToLastBuild: false,
+//                  keepAll: true,
+//                  reportDir: 'reports',
+//                  reportFiles: 'test-report.html',
+//                  reportName: "End-to-end test report"
+//          ])
 
         }
       }
