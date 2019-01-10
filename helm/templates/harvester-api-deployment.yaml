@@ -36,6 +36,8 @@ spec:
           value: {{ required "Missing value FDK_ES_CLUSTERNAME" .Values.FDK_ES_CLUSTERNAME }}
         - name: application_openDataEnhet
           value: {{ required "Missing value FDK_HARVESTER_API_APPLICATION_OPENDATAENHET" .Values.FDK_HARVESTER_API_APPLICATION_OPENDATAENHET }}
+        - name: harvestRecordRetentionDays
+          value: {{ required "Missing value FDK_HARVESTER_API_APPLICATION_HARVESTRETENTIONDAYS" .Values.FDK_HARVESTER_API_APPLICATION_HARVESTRETENTIONDAYS }}
         image: {{ required "Missing value HARVESTER_API_IMAGE" .Values.HARVESTER_API_IMAGE }}
         imagePullPolicy: Always
         name: harvester-api
