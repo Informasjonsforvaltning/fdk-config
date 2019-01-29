@@ -20,6 +20,8 @@ spec:
         - env:
           - name: NODE_ENV
             value: {{ required "Missing value SEARCH_NODE_ENV" .Values.SEARCH_NODE_ENV }}
+          - name: DISQUS_SHORTNAME
+            value: {{ required "Missing value SEARCH_DISQUS_SHORTNAME" .Values.SEARCH_DISQUS_SHORTNAME }}
           image: {{ required "Missing value SEARCH_IMAGE" .Values.SEARCH_IMAGE }}
           imagePullPolicy: Always
           name: search
