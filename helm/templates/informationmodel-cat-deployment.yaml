@@ -23,6 +23,8 @@ spec:
           value: {{ required "Missing value FDK_ES_CLUSTERNODES" .Values.FDK_ES_CLUSTERNODES }}
         - name: SPRING_PROFILES_ACTIVE
           value: {{ required "Missing value SPRING_PROFILES_ACTIVE" .Values.SPRING_PROFILES_ACTIVE }}
+        - name: FDK_ALTINN_MODELS_URL
+          value: {{ required "Missing value FDK_ALTINN_MODELS_URL" .Values.FDK_ALTINN_MODELS_URL }}
         image: {{ required "Missing value INFORMATIONMODEL_CAT_IMAGE" .Values.INFORMATIONMODEL_CAT_IMAGE }}
         imagePullPolicy: Always
         name: informationmodel-cat
