@@ -27,6 +27,8 @@ spec:
           value: "4300"
         - name: REG_API_URL
           value: {{ required "Missing value FDK_REGISTRATION_REACT_API_URL" .Values.FDK_REGISTRATION_REACT_API_URL  }}
+        - name: SEARCH_HOSTNAME
+          value: {{ required "Missing value FDK_REGISTRATION_REACT_SEARCH_HOSTNAME" .Values.FDK_REGISTRATION_REACT_SEARCH_HOSTNAME  }}
         image: {{ required "Missing value REGISTRATION_REACT_IMAGE" .Values.REGISTRATION_REACT_IMAGE }}
         imagePullPolicy: Always
         name: registration-react
