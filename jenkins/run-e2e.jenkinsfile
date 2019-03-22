@@ -109,9 +109,9 @@ try {
 //    sleep(10)
 //  }
   stage('Run tests') {
-    //options {
-    //  timeout(time: 60, unit: 'MINUTES') // change to 30 minutes once environment is fixed
-    //}
+    options {
+      timeout(time: 1, unit: 'MINUTES') // change to 30 minutes once environment is fixed
+    }
     node('jenkins-maven') {
       echo "jenkins-maven"
       container('java-docker') {
