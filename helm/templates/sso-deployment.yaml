@@ -19,7 +19,7 @@ spec:
       containers:
         - env:
           - name: KEYCLOAK_USER
-            value: {{ required "Missing value FDK_SSO_KEYCLOAK_USER" .Values.FDK_SSO_KEYCLOAK_USER" }}
+            value: {{ required "Missing value FDK_SSO_KEYCLOAK_USER" .Values.FDK_SSO_KEYCLOAK_USER }}
           - name: KEYCLOAK_PASSWORD
             value: {{ required "Missing value FDK_SSO_KEYCLOAK_PASSWORD" .Values.FDK_SSO_KEYCLOAK_PASSWORD }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
