@@ -27,5 +27,12 @@ spec:
           name: search
           ports:
           - containerPort: 8080
+          volumeMounts:
+          - mountPath: /conf
+            name: sso-claim0
        restartPolicy: Always
+       volumes:
+       - name: sso-claim0
+         persistentVolumeClaim:
+           claimName: sso-claim0
 status: {}
