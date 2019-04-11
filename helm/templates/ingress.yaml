@@ -31,6 +31,13 @@ spec:
         backend:
           serviceName: harvester
           servicePort: 8080
+  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_SSO" .Values.FDK_INGRESS_HOSTNAME_SSO }}
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: sso
+          servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
     http:
       paths:
