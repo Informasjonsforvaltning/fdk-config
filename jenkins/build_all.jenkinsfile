@@ -109,6 +109,7 @@ def get_values_images_text(checksums) {
     }
     lines.add("ES5_BUSY_IMAGE: busybox")
     lines.add("ES5_IMAGE: docker.elastic.co/elasticsearch/elasticsearch:5.6.9")
+    lines.add("SSO_IMAGE: jboss/keycloak")
     return lines.join("\n")
 }
 
