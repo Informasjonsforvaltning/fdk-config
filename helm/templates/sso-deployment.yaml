@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: sso
+  name: sso
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        fdk.service: sso
+    spec:
+      containers:
+        - env:
+          - name: KEYCLOAK_USER
+            value: {{ required "Missing value FDK_SSO_KEYCLOAK_USER" .Values.FDK_SSO_KEYCLOAK_USER }}
+          - name: KEYCLOAK_PASSWORD
+            value: {{ required "Missing value FDK_SSO_KEYCLOAK_PASSWORD" .Values.FDK_SSO_KEYCLOAK_PASSWORD }}
+          - name: KEYCLOAK_LOGLEVEL
+                      value: {{ required "Missing value FDK_SSO_KEYCLOAK_LOGLEVEL" .Values.FDK_SSO_KEYCLOAK_LOGLEVEL }}
+          image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
+          imagePullPolicy: Always
+          name: search
+          ports:
+          - containerPort: 8080
+          volumeMounts:
+          - mountPath: /tmp/keycloak/import
+            name: sso-claim0
+          - mountPath: /tmp/keycloak/export
+            name: sso-claim1
+       restartPolicy: Always
+       volumes:
+       - name: sso-claim0
+         persistentVolumeClaim:
+           claimName: sso-claim0
+       volumes:
+       - name: sso-claim1
+         persistentVolumeClaim:
+           claimName: sso-claim1
+status: {}
