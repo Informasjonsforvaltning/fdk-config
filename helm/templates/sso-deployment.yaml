@@ -32,9 +32,9 @@ spec:
           volumeMounts:
           - mountPath: /tmp/keycloak
             name: sso-claim0
-       restartPolicy: Always
-       volumes:
-       - name: sso-claim0
-         persistentVolumeClaim:
-           claimName: sso-claim0
+      restartPolicy: Always
+      volumes:
+      - name: sso-claim0
+        persistentVolumeClaim:
+          claimName: sso-claim0
 status: {}
