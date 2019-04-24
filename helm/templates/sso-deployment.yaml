@@ -30,17 +30,11 @@ spec:
           ports:
           - containerPort: 8080
           volumeMounts:
-          - mountPath: /tmp/keycloak/import
+          - mountPath: /tmp/keycloak
             name: sso-claim0
-          - mountPath: /tmp/keycloak/export
-            name: sso-claim1
        restartPolicy: Always
        volumes:
        - name: sso-claim0
          persistentVolumeClaim:
            claimName: sso-claim0
-       volumes:
-       - name: sso-claim1
-         persistentVolumeClaim:
-           claimName: sso-claim1
 status: {}
