@@ -26,7 +26,7 @@ spec:
             value: {{ required "Missing value FDK_SSO_KEYCLOAK_LOGLEVEL" .Values.FDK_SSO_KEYCLOAK_LOGLEVEL }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
           imagePullPolicy: Always
-          name: search
+          name: sso
           ports:
           - containerPort: 8080
           volumeMounts:
