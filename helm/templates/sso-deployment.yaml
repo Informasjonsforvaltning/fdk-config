@@ -23,7 +23,7 @@ spec:
           - name: KEYCLOAK_PASSWORD
             value: {{ required "Missing value FDK_SSO_KEYCLOAK_PASSWORD" .Values.FDK_SSO_KEYCLOAK_PASSWORD }}
           - name: KEYCLOAK_LOGLEVEL
-                      value: {{ required "Missing value FDK_SSO_KEYCLOAK_LOGLEVEL" .Values.FDK_SSO_KEYCLOAK_LOGLEVEL }}
+            value: {{ required "Missing value FDK_SSO_KEYCLOAK_LOGLEVEL" .Values.FDK_SSO_KEYCLOAK_LOGLEVEL }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
           imagePullPolicy: Always
           name: search
