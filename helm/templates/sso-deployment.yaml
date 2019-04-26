@@ -25,7 +25,7 @@ spec:
           - name: KEYCLOAK_LOGLEVEL
             value: {{ required "Missing value FDK_SSO_KEYCLOAK_LOGLEVEL" .Values.FDK_SSO_KEYCLOAK_LOGLEVEL }}
           - name: PROXY_ADDRESS_FORWARDING
-            value: {{ required "Missing value FDK_SSO_KEYCLOAK_PROXY_ADDRESS_FORWARDING" .Values.FDK_SSO_KEYCLOAK_PROXY_ADDRESS_FORWARDING }}
+            value: {{ required "Missing value FDK_SSO_KEYCLOAK_PROXY_ADDRESS_FORWARDING" .Values.FDK_SSO_KEYCLOAK_PROXY_ADDRESS_FORWARDING | quote }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
           imagePullPolicy: Always
           name: sso
