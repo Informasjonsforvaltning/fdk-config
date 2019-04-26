@@ -27,7 +27,6 @@ spec:
           - name: PROXY_ADDRESS_FORWARDING
             value: {{ required "Missing value FDK_SSO_KEYCLOAK_PROXY_ADDRESS_FORWARDING" .Values.FDK_SSO_KEYCLOAK_PROXY_ADDRESS_FORWARDING | quote }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
-          args: ["-b 0.0.0.0 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/tmp/keycloak/import -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"]
           imagePullPolicy: Always
           name: sso
           ports:
