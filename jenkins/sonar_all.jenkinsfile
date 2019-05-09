@@ -46,7 +46,7 @@ node ('jenkins-maven'){
 
       output = wrapper.script(script:'''#!/usr/bin/env bash
 set -e
-source ./buildGroupsEnv.sh
+source ./buildCommands.sh
 for i in "${!BUILD_APPS[@]}"; do
     echo "${BUILD_APPS[$i]} ${BUILD_CMD[$i]}"
 done
