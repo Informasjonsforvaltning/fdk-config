@@ -23,8 +23,6 @@ spec:
         env:
         - name: NODE_ENV
           value: {{ required "Missing value FDK_CONCEPT_CLIENT_NODE_ENV" .Values.FDK_CONCEPT_CLIENT_NODE_ENV }}
-        - name: SEARCH_HOSTNAME
-          value: {{ required "Missing value FDK_CONCEPT_CLIENT_SEARCH_HOSTNAME" .Values.FDK_CONCEPT_CLIENT_SEARCH_HOSTNAME  }}
         image: {{ required "Missing value CONCEPT_CLIENT_IMAGE" .Values.CONCEPT_CLIENT_IMAGE }}
         imagePullPolicy: Always
         name: concept-client

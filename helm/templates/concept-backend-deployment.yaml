@@ -17,10 +17,6 @@ spec:
     spec:
       containers:
       - env:
-        - name: FDK_ES_CLUSTERNAME
-          value: {{ required "Missing value FDK_ES_CLUSTERNAME" .Values.FDK_ES_CLUSTERNAME }}
-        - name: FDK_ES_CLUSTERNODES
-          value: {{ required "Missing value FDK_ES_CLUSTERNODES" .Values.FDK_ES_CLUSTERNODES }}
         - name: SPRING_PROFILES_ACTIVE
           value: {{ required "Missing value SPRING_PROFILES_ACTIVE" .Values.SPRING_PROFILES_ACTIVE }}
         image: {{ required "Missing value CONCEPT_BACKEND_IMAGE" .Values.CONCEPT_BACKEND_IMAGE }}

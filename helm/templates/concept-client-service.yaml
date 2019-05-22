@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     fdk.service: concept-client
-  name: registration-react
+  name: concept-client
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   type: NodePort
@@ -13,6 +13,6 @@ spec:
     port: 4300
     targetPort: 4300
   selector:
-    fdk.service: registration-react
+    fdk.service: concept-client
 status:
   loadBalancer: {}
