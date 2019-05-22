@@ -23,6 +23,8 @@ spec:
           value: {{ required "Missing value FDK_ES_CLUSTERNODES" .Values.FDK_ES_CLUSTERNODES }}
         - name: SPRING_PROFILES_ACTIVE
           value: {{ required "Missing value SPRING_PROFILES_ACTIVE" .Values.SPRING_PROFILES_ACTIVE }}
+        - name: CONCEPT_CAT_HARVEST_URL_OVERRIDE
+          value: {{ required "Missing value CONCEPT_CAT_HARVEST_URL_OVERRIDE" .Values.CONCEPT_CAT_HARVEST_URL_OVERRIDE }}
         image: {{ required "Missing value CONCEPT_CAT_IMAGE" .Values.CONCEPT_CAT_IMAGE }}
         imagePullPolicy: Always
         name: concept-cat
