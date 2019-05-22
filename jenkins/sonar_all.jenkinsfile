@@ -64,7 +64,7 @@ done
               sh build_instructions.tokenize('&')[0].trim() + " -DskipDocker"
               withCredentials([string(credentialsId: 'fdk-sonar-token', variable: 'TOKEN')]) {
                 withSonarQubeEnv('fdk-sonar') {
-                  sh "cd applications/${service} && mvn clean install sonar:sonar" // -Dsonar.host.url=http://35.228.10.20 -Dsonar.login=$TOKEN"
+                  sh "cd applications/${service} && mvn clean install sonar:sonar -Dsonar.host.url=http://35.228.110.43 -Dsonar.login=$TOKEN"
                 }
               }
             }
