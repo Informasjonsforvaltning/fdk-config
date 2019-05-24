@@ -23,6 +23,12 @@ spec:
           value: {{ required "Missing value FDK_REFERENCE_DATA_THEMESHTTPUSERNAME" .Values.FDK_REFERENCE_DATA_THEMESHTTPUSERNAME }}
         - name: themesHttpPassword
           value: {{ required "Missing value FDK_REFERENCE_DATA_THEMESHTTPPASSWORD" .Values.FDK_REFERENCE_DATA_THEMESHTTPPASSWORD }}
+        - name: FDK_SQL_JDBC_CONNECTION
+          value: {{ required "Missing value FDK_REFERENCE_DATA_SQL_JDBC_CONNECTION" .Values.FDK_REFERENCE_DATA_SQL_JDBC_CONNECTION }}
+        - name: FDK_SQL_USERNAME
+          value: {{ required "Missing value FDK_REFERENCE_DATA_SQL_USERNAME" .Values.FDK_REFERENCE_DATA_SQL_USERNAME }}
+        - name: FDK_SQL_PASSWORD
+          value: {{ required "Missing value FDK_REFERENCE_DATA_SQL_PASSWORD" .Values.FDK_REFERENCE_DATA_SQL_PASSWORD }}
         image: {{ required "Missing value REFERENCE_DATA_IMAGE" .Values.REFERENCE_DATA_IMAGE }}
         imagePullPolicy: Always
         name: reference-data
