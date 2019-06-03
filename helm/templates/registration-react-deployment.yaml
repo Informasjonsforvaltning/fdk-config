@@ -25,6 +25,8 @@ spec:
           value: {{ required "Missing value FDK_REGISTRATION_REACT_NODE_ENV" .Values.FDK_REGISTRATION_REACT_NODE_ENV }}
         - name: SEARCH_HOSTNAME
           value: {{ required "Missing value FDK_REGISTRATION_REACT_SEARCH_HOSTNAME" .Values.FDK_REGISTRATION_REACT_SEARCH_HOSTNAME  }}
+        - name: REFERENCE_DATA_AUTHORIZATION
+          value: {{ .Values.FDK_REGISTRATION_REACT_REFERENCE_DATA_AUTHORIZATION  }}
         image: {{ required "Missing value REGISTRATION_REACT_IMAGE" .Values.REGISTRATION_REACT_IMAGE }}
         imagePullPolicy: Always
         name: registration-react
