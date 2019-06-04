@@ -311,42 +311,44 @@ done
 */
 def buildProject(String app, String checksum, String compile, String branch_name) {
   node('jenkins-maven') {
-    stage('checkout') {
-        container('java-docker') {
-          checkout ( [$class: 'GitSCM',
-                branches: [[name: after ]],
-                userRemoteConfigs: [[
-                    credentialsId: 'systemjenkinsfdk',
-                    url: url]]])
-        }
-    }
-    stage("Build ${app}") {
-      if (compile.startsWith('mvn')){
-        container('java-docker') {
-            withMaven(maven: 'M3') {
-              // Hack, remove && ... step.
-              sh compile.tokenize('&')[0].trim()
+    withEnv(['PATH=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin/docker-credential-gcr']) {
+        stage('checkout') {
+            container('java-docker') {
+                checkout ( [$class: 'GitSCM',
+                            branches: [[name: after ]],
+                            userRemoteConfigs: [[
+                                                        credentialsId: 'systemjenkinsfdk',
+                                                        url: url]]])
             }
-        } // container
-      } else {
-        container('java-docker') {
-          nodejs(nodeJSInstallationName: 'fdk-node') {
-            sh "npm config set unsafe-perm true"
-            echo "Gonna execute: ${compile}"
-            sh "(${compile})"
-          }
         }
-      }
-    } // stage: build
-    stage("Push ${app} to registry") {
-      container('java-docker') {
-        docker.withRegistry('https://eu.gcr.io', 'gcr:fdk-infra') {
-          sh "docker tag dcatno/${app}:latest fdk-infra/${app}:${checksum}"
-          def customImage = docker.image("fdk-infra/${app}:${checksum}")
-          /* Push the container to the custom Registry */
-          customImage.push()
-        }
-      }
-    } // stage: push..
+        stage("Build ${app}") {
+            if (compile.startsWith('mvn')){
+                container('java-docker') {
+                    withMaven(maven: 'M3') {
+                        // Hack, remove && ... step.
+                        sh compile.tokenize('&')[0].trim()
+                    }
+                } // container
+            } else {
+                container('java-docker') {
+                    nodejs(nodeJSInstallationName: 'fdk-node') {
+                        sh "npm config set unsafe-perm true"
+                        echo "Gonna execute: ${compile}"
+                        sh "(${compile})"
+                    }
+                }
+            }
+        } // stage: build
+        stage("Push ${app} to registry") {
+            container('java-docker') {
+                docker.withRegistry('https://eu.gcr.io', 'gcr:fdk-infra') {
+                    sh "docker tag dcatno/${app}:latest fdk-infra/${app}:${checksum}"
+                    def customImage = docker.image("fdk-infra/${app}:${checksum}")
+                    /* Push the container to the custom Registry */
+                    customImage.push()
+                }
+            }
+        } // stage: push..
+    }
   } // node
 }
