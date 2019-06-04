@@ -311,7 +311,7 @@ done
 */
 def buildProject(String app, String checksum, String compile, String branch_name) {
   node('jenkins-maven') {
-    withEnv(['PATH=$PATH:/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin/docker-credential-gcr']) {
+    withEnv(['PATH+EXTRA=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin/docker-credential-gcr']) {
         stage('checkout') {
             container('java-docker') {
                 checkout ( [$class: 'GitSCM',
