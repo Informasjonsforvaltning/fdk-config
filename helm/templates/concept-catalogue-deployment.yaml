@@ -3,8 +3,8 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    fdk.service: concept-backend
-  name: concept-backend
+    fdk.service: concept-catalogue
+  name: concept-catalogue
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   replicas: 1
@@ -13,7 +13,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        fdk.service: concept-backend
+        fdk.service: concept-catalogue
     spec:
       containers:
       - env:
@@ -21,7 +21,7 @@ spec:
           value: {{ required "Missing value SPRING_PROFILES_ACTIVE" .Values.SPRING_PROFILES_ACTIVE }}
         image: {{ required "Missing value CONCEPT_BACKEND_IMAGE" .Values.CONCEPT_BACKEND_IMAGE }}
         imagePullPolicy: Always
-        name: concept-backend
+        name: concept-catalogue
         ports:
         - containerPort: 8080
         resources:

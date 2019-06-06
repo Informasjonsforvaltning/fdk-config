@@ -3,8 +3,8 @@ kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    fdk.service: concept-client
-  name: concept-client
+    fdk.service: concept-catalogue-gui
+  name: concept-catalogue-gui
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   type: NodePort
@@ -13,6 +13,6 @@ spec:
     port: 4300
     targetPort: 4300
   selector:
-    fdk.service: concept-client
+    fdk.service: concept-catalogue-gui
 status:
   loadBalancer: {}

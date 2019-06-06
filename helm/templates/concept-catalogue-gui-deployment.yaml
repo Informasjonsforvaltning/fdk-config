@@ -3,8 +3,8 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    fdk.service: concept-client
-  name: concept-client
+    fdk.service: concept-catalogue-gui
+  name: concept-catalogue-gui
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   replicas: 1
@@ -14,7 +14,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        fdk.service: concept-client
+        fdk.service: concept-catalogue-gui
     spec:
       containers:
       - args:
@@ -25,7 +25,7 @@ spec:
           value: {{ required "Missing value FDK_CONCEPT_CLIENT_NODE_ENV" .Values.FDK_CONCEPT_CLIENT_NODE_ENV }}
         image: {{ required "Missing value CONCEPT_CLIENT_IMAGE" .Values.CONCEPT_CLIENT_IMAGE }}
         imagePullPolicy: Always
-        name: concept-client
+        name: concept-catalogue-gui
         ports:
         - containerPort: 4300
         resources:
