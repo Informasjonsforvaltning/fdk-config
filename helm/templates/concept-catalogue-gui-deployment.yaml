@@ -22,14 +22,14 @@ spec:
         - start
         env:
         - name: NODE_ENV
-          value: {{ required "Missing value FDK_CONCEPT_CLIENT_NODE_ENV" .Values.FDK_CONCEPT_CLIENT_NODE_ENV }}
-        image: {{ required "Missing value CONCEPT_CLIENT_IMAGE" .Values.CONCEPT_CLIENT_IMAGE }}
+          value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_GUI_NODE_ENV" .Values.FDK_CONCEPT_CATALOGUE_GUI_NODE_ENV }}
+        image: {{ required "Missing value CONCEPT_CATALOGUE_GUI_IMAGE" .Values.CONCEPT_CATALOGUE_GUI_IMAGE }}
         imagePullPolicy: Always
         name: concept-catalogue-gui
         ports:
         - containerPort: 4300
         resources:
           requests:
-            memory: {{  required "Missing value FDK_CONCEPT_CLIENT_MEMORY" .Values.FDK_CONCEPT_CLIENT_MEMORY | quote }}
+            memory: {{  required "Missing value FDK_CONCEPT_CATALOGUE_GUI_MEMORY" .Values.FDK_CONCEPT_CATALOGUE_GUI_MEMORY | quote }}
       restartPolicy: Always
 status: {}
