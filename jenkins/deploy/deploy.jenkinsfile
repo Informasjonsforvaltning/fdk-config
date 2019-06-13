@@ -225,6 +225,14 @@ node ('helm-kubectl'){
       sh returnStatus: true, script: "gsutil cp ${master_versions_location}/${masterversion}.yaml ."
     } // stage: tag version
 
+    stage('Copy previously deployed version') {
+      withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
+        sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
+      }
+      // Copy previously deployed version ino
+      sh returnStatus: true, script: "gsutil cp ${master_versions_location_base}/deployed/${deploy_environment}/current/ *.yaml ."
+    } // stage: tag version
+
     stage('Authenticating with cluster and helming') {
       def configFileName = get_config_from_env(deploy_environment)
       configFileProvider([configFile(fileId: configFileName, variable: 'VALUES')]) {

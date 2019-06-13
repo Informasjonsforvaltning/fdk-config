@@ -1,3 +1,4 @@
+{{ if (.Values.CONCEPT_CATALOGUE_GUI_IMAGE) and .Values.CONCEPT_CATALOGUE_GUI_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -33,3 +34,4 @@ spec:
             memory: {{  required "Missing value FDK_CONCEPT_CATALOGUE_GUI_MEMORY" .Values.FDK_CONCEPT_CATALOGUE_GUI_MEMORY | quote }}
       restartPolicy: Always
 status: {}
+{{ else }} {{ end }}

@@ -1,3 +1,4 @@
+{{ if (.Values.ES5_IMAGE) and .Values.ES5_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -60,3 +61,4 @@ spec:
         persistentVolumeClaim:
           claimName: elasticsearch5-claim0
 status: {}
+{{ else }} {{ end }}

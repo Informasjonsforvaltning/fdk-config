@@ -1,3 +1,4 @@
+{{ if (.Values.HARVESTER_IMAGE) and .Values.HARVESTER_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -50,3 +51,4 @@ spec:
           failureThreshold: 5
       restartPolicy: Always
 status: {}
+{{ else }} {{ end }}

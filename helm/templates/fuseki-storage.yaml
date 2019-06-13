@@ -1,3 +1,4 @@
+{{ if (.Values.FUSEKI_IMAGE) and .Values.FUSEKI_IMAGE "true" }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -32,3 +33,4 @@ spec:
     pdName: {{ required "Missing value FDK_FUSEKI_VOLUMENAME" .Values.FDK_FUSEKI_VOLUMENAME }}
     fsType: ext4
 {{ end }}
+{{ else }} {{ end }}

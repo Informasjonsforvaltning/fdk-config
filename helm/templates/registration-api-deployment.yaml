@@ -1,3 +1,4 @@
+{{ if (.Values.REGISTRATION_API_IMAGE) and .Values.REGISTRATION_API_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -73,3 +74,4 @@ spec:
         persistentVolumeClaim:
           claimName: registration-api-claim0
 status: {}
+{{ else }} {{ end }}

@@ -1,3 +1,4 @@
+{{ if (.Values.CONCEPT_CAT_IMAGE) and .Values.CONCEPT_CAT_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -35,3 +36,4 @@ spec:
             memory: {{ required "Missing value FDK_CONCEPT_CAT_MEMORY" .Values.FDK_CONCEPT_CAT_MEMORY | quote }}
       restartPolicy: Always
 status: {}
+{{ else }} {{ end }}

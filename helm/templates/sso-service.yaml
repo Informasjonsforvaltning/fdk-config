@@ -1,3 +1,4 @@
+{{ if (.Values.SSO_IMAGE) and .Values.SSO_IMAGE "true" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -17,3 +18,4 @@ spec:
     fdk.service: sso
 status:
   loadBalancer: {}
+{{ else }} {{ end }}

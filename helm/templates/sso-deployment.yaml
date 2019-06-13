@@ -1,3 +1,4 @@
+{{ if (.Values.SSO_IMAGE) and .Values.SSO_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -40,3 +41,4 @@ spec:
         persistentVolumeClaim:
           claimName: sso-claim0
 status: {}
+{{ else }} {{ end }}

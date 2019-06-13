@@ -1,3 +1,4 @@
+{{ if (.Values.FUSEKI_IMAGE) and .Values.FUSEKI_IMAGE "true" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,3 +17,4 @@ spec:
     fdk.service: fuseki
 status:
   loadBalancer: {}
+{{ else }} {{ end }}

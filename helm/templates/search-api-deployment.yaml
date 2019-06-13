@@ -1,3 +1,4 @@
+{{ if (.Values.FDK_SEARCH_API_IMAGE) and .Values.FDK_SEARCH_API_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -33,3 +34,4 @@ spec:
             memory: {{ required "Missing value FDK_SEARCH_API_MEMORY" .Values.FDK_SEARCH_API_MEMORY | quote }}
       restartPolicy: Always
 status: {}
+{{ else }} {{ end }}

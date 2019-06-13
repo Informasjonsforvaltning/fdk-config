@@ -1,3 +1,4 @@
+{{ if (.Values.ES5_IMAGE) and .Values.ES5_IMAGE "true" }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -32,3 +33,4 @@ spec:
     pdName: {{ required "Missing value FDK_ES_VOLUMENAME" .Values.FDK_ES_VOLUMENAME }}
     fsType: ext4
 {{ end }}
+{{ else }} {{ end }}

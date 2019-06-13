@@ -1,3 +1,4 @@
+{{ if (.Values.REFERENCE_DATA_IMAGE) and .Values.REFERENCE_DATA_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -46,3 +47,4 @@ spec:
         persistentVolumeClaim:
           claimName: reference-data-claim0
 status: {}
+{{ else }} {{ end }}

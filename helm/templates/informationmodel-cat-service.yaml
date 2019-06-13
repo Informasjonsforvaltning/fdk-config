@@ -1,3 +1,4 @@
+{{ if (.Values.INFORMATIONMODEL_CAT_IMAGE) and .Values.INFORMATIONMODEL_CAT_IMAGE "true" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,3 +17,4 @@ spec:
     fdk.service: informationmodel-cat
 status:
   loadBalancer: {}
+{{ else }} {{ end }}

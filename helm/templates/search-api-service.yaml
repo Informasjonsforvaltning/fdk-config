@@ -1,3 +1,4 @@
+{{ if (.Values.FDK_SEARCH_API_IMAGE) and .Values.FDK_SEARCH_API_IMAGE "true" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,3 +17,4 @@ spec:
     fdk.service: search-api
 status:
   loadBalancer: {}
+{{ else }} {{ end }}

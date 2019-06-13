@@ -1,3 +1,4 @@
+{{ if (.Values.FUSEKI_IMAGE) and .Values.FUSEKI_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -34,3 +35,4 @@ spec:
         persistentVolumeClaim:
           claimName: fuseki-claim0
 status: {}
+{{ else }} {{ end }}

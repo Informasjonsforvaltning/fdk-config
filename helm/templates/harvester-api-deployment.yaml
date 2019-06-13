@@ -1,3 +1,4 @@
+{{ if (.Values.HARVESTER_API_IMAGE) and .Values.HARVESTER_API_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -48,3 +49,4 @@ spec:
             memory: {{ required "Missing value FDK_HARVESTER_API_MEMORY" .Values.FDK_HARVESTER_API_MEMORY | quote }}
       restartPolicy: Always
 status: {}
+{{ else }} {{ end }}

@@ -1,3 +1,4 @@
+{{ if (.Values.NGINX_SEARCH_IMAGE) and .Values.NGINX_SEARCH_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -26,3 +27,4 @@ spec:
             memory: {{ required "Missing value FDK_NGINX_SEARCH_MEMORY" .Values.FDK_NGINX_SEARCH_MEMORY | quote }}
       restartPolicy: Always
 status: {}
+{{ else }} {{ end }}

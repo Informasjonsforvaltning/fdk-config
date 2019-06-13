@@ -1,3 +1,4 @@
+{{ if (.Values.SSO_IMAGE) and .Values.SSO_IMAGE "true" }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -32,3 +33,4 @@ spec:
     pdName: {{ required "Missing value FDK_SSO_VOLUMENAME" .Values.FDK_SSO_VOLUMENAME }}
     fsType: ext4
 {{ end }}
+{{ else }} {{ end }}

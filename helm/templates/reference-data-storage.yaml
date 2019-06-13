@@ -1,3 +1,4 @@
+{{ if (.Values.REFERENCE_DATA_IMAGE) and .Values.REFERENCE_DATA_IMAGE "true" }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -32,3 +33,4 @@ spec:
     pdName: {{ required "Missing value FDK_REFERENCE_DATA_VOLUMENAME" .Values.FDK_REFERENCE_DATA_VOLUMENAME }}
     fsType: ext4
 {{ end }}
+{{ else }} {{ end }}
