@@ -51,5 +51,5 @@ FDK_SEARCH_API_MEMORY: "1500Mi"
 FDK_SEARCH_MEMORY: "100Mi"
 
 ## CONCEPT-CAT temporary workaround
-CONCEPT_CATALOGUE_GUI_IMAGE: eu.gcr.io/fdk-infra/concept-client@sha256:37d2cb962ea360492da49025714eb025ab8c37b52f3c76ebe6bb6b340c1bdaf4
-CONCEPT_CATALOGUE_IMAGE: eu.gcr.io/fdk-infra/concept-registration@sha256:55fa3e66949cd7facad9c3f0e76889420938ef3e5ad2f5158d493b3e4cc97c8d
+# CONCEPT_CATALOGUE_GUI_IMAGE: eu.gcr.io/fdk-infra/concept-client@sha256:37d2cb962ea360492da49025714eb025ab8c37b52f3c76ebe6bb6b340c1bdaf4
+# CONCEPT_CATALOGUE_IMAGE: eu.gcr.io/fdk-infra/concept-registration@sha256:55fa3e66949cd7facad9c3f0e76889420938ef3e5ad2f5158d493b3e4cc97c8d
