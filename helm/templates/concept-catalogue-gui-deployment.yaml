@@ -28,7 +28,7 @@ spec:
         imagePullPolicy: Always
         name: concept-catalogue-gui
         ports:
-        - containerPort: 4300
+        - containerPort: 3111
         resources:
           requests:
             memory: {{  required "Missing value FDK_CONCEPT_CATALOGUE_GUI_MEMORY" .Values.FDK_CONCEPT_CATALOGUE_GUI_MEMORY | quote }}

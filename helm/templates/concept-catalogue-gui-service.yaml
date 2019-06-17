@@ -10,9 +10,9 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - name: "4300"
-    port: 4300
-    targetPort: 4300
+  - name: "3111"
+    port: 3111
+    targetPort: 3111
   selector:
     fdk.service: concept-catalogue-gui
 status:
