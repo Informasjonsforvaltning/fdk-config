@@ -1,4 +1,4 @@
-{{ if (.Values.FDK_REGISTRATION_REACT_IMAGE) and .Values.FDK_REGISTRATION_REACT_IMAGE "true" }}
+{{ if (.Values.REGISTRATION_REACT_IMAGE) and .Values.REGISTRATION_REACT_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:

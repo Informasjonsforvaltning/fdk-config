@@ -1,4 +1,4 @@
-{{ if (.Values.FDK_SEARCH_IMAGE) and .Values.FDK_SEARCH_IMAGE "true" }}
+{{ if (.Values.SEARCH_IMAGE) and .Values.SEARCH_IMAGE "true" }}
 apiVersion: v1
 kind: Service
 metadata:
