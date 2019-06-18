@@ -1,7 +1,6 @@
 @Library('utils') _
 
-// Take params from build with params.
-after = params.after
+// Take params from build with params.bu
 before = params.before
 url = params.url
 ref = params.ref
@@ -65,12 +64,24 @@ def do_checksums(services) {
               credentialsId: 'systemjenkinsfdk',
               url: url]]])
     services.each { app, value ->
-      checksum = wrapper.script (
-          script: "git ls-files applications/${app} | git hash-object --stdin-paths | git hash-object --stdin",
-          //script: "git log -n 1 --format=\"%h %aN %s %ad\" -- applications/${app}",
-          returnStdout: true,
-          stepName: "Calculate hash for ${app}"
-      ).split(" ")[0]
+      //special treatment of applications not in application directory
+      if (app == "concept-catalogue-gui") {
+          //application on root of git repository
+          checksum = wrapper.script (
+                  script: "git ls-files | git hash-object --stdin-paths | git hash-object --stdin",
+                  //script: "git log -n 1 --format=\"%h %aN %s %ad\" -- applications/${app}",
+                  returnStdout: true,
+                  stepName: "Calculate hash for application on root of git repository:${app}"
+          ).split(" ")[0]
+      }  else {
+          //applications inside applications/ directory
+          checksum = wrapper.script (
+                  script: "git ls-files applications/${app} | git hash-object --stdin-paths | git hash-object --stdin",
+                  //script: "git log -n 1 --format=\"%h %aN %s %ad\" -- applications/${app}",
+                  returnStdout: true,
+                  stepName: "Calculate hash for ${app}"
+          ).split(" ")[0]
+      }
       services_checksums[app] = checksum.trim()
     }
 
