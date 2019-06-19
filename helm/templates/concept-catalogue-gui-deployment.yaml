@@ -26,6 +26,8 @@ spec:
           value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_GUI_NODE_ENV" .Values.FDK_CONCEPT_CATALOGUE_GUI_NODE_ENV }}
         - name: CONCEPT_REGISTRATION_API
           value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_GUI_CONCEPT_REGISTRATION_API" .Values.FDK_CONCEPT_CATALOGUE_GUI_CONCEPT_REGISTRATION_API }}
+        - name: PUBLISHER_API
+          value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_GUI_PUBLISHER_API" .Values.FDK_CONCEPT_CATALOGUE_GUI_PUBLISHER_API }}
         image: {{ required "Missing value CONCEPT_CATALOGUE_GUI_IMAGE" .Values.CONCEPT_CATALOGUE_GUI_IMAGE }}
         imagePullPolicy: Always
         name: concept-catalogue-gui
