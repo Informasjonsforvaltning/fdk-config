@@ -282,7 +282,8 @@ done
 
       // its a pull request.
       if (pull_request_url != "") {
-          build job: 'run-e2e', wait: false , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: after]]
+          //disable run e2e job on pull request. Will not work with multi-repo configuration
+          //build job: 'run-e2e', wait: false , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: after]]
       }
       if (branch_ref == 'heads/develop') {
 //        slack_msg = slack_msg + " - <${JENKINS_URL}job/deploy-scripts/job/deploy/parambuild/?masterversion=${after}|Deploy now> - btw, I already started deploying to ut1!"
