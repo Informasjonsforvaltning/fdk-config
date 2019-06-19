@@ -47,7 +47,7 @@ spec:
         - name: google-cloud-key
           secret:
             defaultMode: 420
-            secretName: postgresql-{{ required "Missing value NAMESPACE" .Values.NAMESPACE }}-key  # dynamic (ex: postgresql-ut1-key)
+            secretName: postgresql-{{ required "Missing value NAMESPACE" .Values.NAMESPACE }}-key
         - name: ssl-certs
           hostPath:
             path: /etc/ssl/certs
