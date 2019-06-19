@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     run: postgresql-sqlproxy
-  name: postgresql-sqlproxy-service
+  name: postgresql-sqlproxy
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   ports:

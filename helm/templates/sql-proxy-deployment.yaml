@@ -24,8 +24,8 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    run: postgresql-sqlproxy-ut1
-  name: postgresql-sqlproxy-ut1
+    run: postgresql-sqlproxy
+  name: postgresql-sqlproxy
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   replicas: 1
@@ -62,7 +62,7 @@ spec:
             - name: google-cloud-key
               mountPath: /var/secrets/google
           command: ["/cloud_sql_proxy",
-                    "-instances=fdk-dev:europe-north1:fdk-sql-{{ required "Missing value FDK_SQL_ENVIRONMENT" .Values.FDK_SQL_ENVIRONMENT }}=tcp:0.0.0.0:5432"]
+                    "-instances={{ required "Missing value FDK_SQL_PROXY_CLUSTER" .Values.FDK_SQL_PROXY_CLUSTER }}:europe-north1:fdk-sql-{{ required "Missing value FDK_SQL_PROXY_SQL_ENVIRONMENT" .Values.FDK_SQL_PROXY_SQL_ENVIRONMENT }}=tcp:0.0.0.0:5432"]
           imagePullPolicy: Always
           livenessProbe:
             exec:

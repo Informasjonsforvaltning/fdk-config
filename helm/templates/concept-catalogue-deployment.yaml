@@ -20,7 +20,13 @@ spec:
       - env:
         - name: SPRING_PROFILES_ACTIVE
           value: {{ required "Missing value SPRING_PROFILES_ACTIVE" .Values.SPRING_PROFILES_ACTIVE }}
-        image: {{ required "Missing value CONCEPT_CATALOGUE_IMAGE" .Values.CONCEPT_CATALOGUE_IMAGE }}
+        - name: FDK_SQL_USERNAME
+          value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_SQL_USERNAME" .Values.FDK_CONCEPT_CATALOGUE_SQL_USERNAME }}
+        - name: FDK_SQL_PASSWORD
+          value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_SQL_PASSWORD" .Values.FDK_CONCEPT_CATALOGUE_SQL_PASSWORD }}
+        - name: FDK_SQL_JDBC_CONNECTION
+          value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_SQL_JDBC_CONNECTION" .Values.FDK_CONCEPT_CATALOGUE_SQL_JDBC_CONNECTION }}
+       image: {{ required "Missing value CONCEPT_CATALOGUE_IMAGE" .Values.CONCEPT_CATALOGUE_IMAGE }}
         imagePullPolicy: Always
         name: concept-catalogue
         ports:
