@@ -47,7 +47,7 @@ spec:
         - name: google-cloud-key
           secret:
             defaultMode: 420
-            secretName: postgresql-{{ required "Missing value FDK_SQL_ENVIRONMENT" .Values.FDK_SQL_ENVIRONMENT }}-key  # dynamic (ex: postgresql-ut1-key)
+            secretName: postgresql-{{ required "Missing value FDK_SQL_PROXY_SQL_ENVIRONMENT" .Values.FDK_SQL_PROXY_SQL_ENVIRONMENTT }}-key  # dynamic (ex: postgresql-ut1-key)
         - name: ssl-certs
           hostPath:
             path: /etc/ssl/certs
