@@ -26,7 +26,7 @@ spec:
           value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_SQL_PASSWORD" .Values.FDK_CONCEPT_CATALOGUE_SQL_PASSWORD }}
         - name: FDK_SQL_JDBC_CONNECTION
           value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_SQL_JDBC_CONNECTION" .Values.FDK_CONCEPT_CATALOGUE_SQL_JDBC_CONNECTION }}
-       image: {{ required "Missing value CONCEPT_CATALOGUE_IMAGE" .Values.CONCEPT_CATALOGUE_IMAGE }}
+        image: {{ required "Missing value CONCEPT_CATALOGUE_IMAGE" .Values.CONCEPT_CATALOGUE_IMAGE }}
         imagePullPolicy: Always
         name: concept-catalogue
         ports:
