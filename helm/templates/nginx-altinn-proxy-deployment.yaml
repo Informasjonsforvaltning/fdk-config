@@ -22,7 +22,7 @@ spec:
           value: {{ required "Missing value FDK_NGINX_ALTINN_PROXY_ALTINN_HOST" .Values.FDK_NGINX_ALTINN_PROXY_ALTINN_HOST }}
         image: {{ required "Missing value NGINX_ALTINN_PROXY_IMAGE" .Values.NGINX_ALTINN_PROXY_IMAGE }}
         envFrom:
-          -secretRef:
+        - secretRef:
             name: fdk-altinnproxy-{{ required "Missing value NAMESPACE" .Values.NAMESPACE }}-brreg-altinn-key
         imagePullPolicy: Always
         name: nginx-altinn-proxy
