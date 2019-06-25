@@ -5,7 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     fdk.service: nginx-altinn-proxy
-  name: concept-cat
+  name: nginx-altinn-proxy
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   type: NodePort
