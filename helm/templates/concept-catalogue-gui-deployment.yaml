@@ -30,6 +30,8 @@ spec:
           value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_GUI_PUBLISHER_API" .Values.FDK_CONCEPT_CATALOGUE_GUI_PUBLISHER_API }}
         - name: PUBLISHER_DATA_AUTHORIZATION
           value: {{ .Values.FDK_CONCEPT_CATALOGUE_GUI_PUBLISHER_DATA_AUTHORIZATION }}
+        - name: CONCEPT_API
+          value: {{ .Values.FDK_CONCEPT_CATALOGUE_GUI_CONCEPT_API }}
         image: {{ required "Missing value CONCEPT_CATALOGUE_GUI_IMAGE" .Values.CONCEPT_CATALOGUE_GUI_IMAGE }}
         imagePullPolicy: Always
         name: concept-catalogue-gui
