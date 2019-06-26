@@ -24,6 +24,20 @@ spec:
         backend:
           serviceName: nginx-search
           servicePort: 8080
+  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE_GUI" .Values.FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE_GUI }}
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: concept-catalogue-gui
+          servicePort: 3111
+  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE" .Values.FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE }}
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: concept-catalogue
+          servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_HARVESTER" .Values.FDK_INGRESS_HOSTNAME_HARVESTER }}
     http:
       paths:
@@ -49,6 +63,8 @@ spec:
   - hosts:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_REG" .Values.FDK_INGRESS_HOSTNAME_REG }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_WWW" .Values.FDK_INGRESS_HOSTNAME_WWW }}
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE_GUI" .Values.FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE_GUI }}
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE" .Values.FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_HARVESTER" .Values.FDK_INGRESS_HOSTNAME_HARVESTER }}
     secretName: {{ required "Missing value FDK_CERT_NAME_BASE" .Values.FDK_CERT_NAME_BASE }}
   - hosts:
