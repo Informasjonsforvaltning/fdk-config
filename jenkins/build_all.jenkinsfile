@@ -128,6 +128,7 @@ node ('helm-kubectl'){
     def bygg_mikrotjenester = [:]
     def checksums = [:]
     def values_images_text = ""
+    def build_component_name_list = [:]
     String branch_name = "unknown"
     String branch_ref = "unknown"
     String global_ymd = '00001224_1200'
@@ -205,9 +206,7 @@ done
         images_to_build = check_all_images(checksums)
       }
 
-      slackSend   channel: '#jenkins',
-              color: 'danger',
-              message: "Her beregnes det hva som skal bygges: ${images_to_build}"
+      build_component_name_list = images_to_build
 
       images_to_build.each{service ->
         echo "gonna build ${service}"
@@ -284,7 +283,7 @@ done
     stage('Tag images') {
       String yearmonthdate = global_ymd
 
-      def slack_msg = "(FDK) <${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built in " + currentBuild.durationString + ". Services built: xxx."
+      def slack_msg = "(FDK) <${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built in " + currentBuild.durationString + ". Services built: ${build_component_name_list}."
 
       // its a pull request.
       if (pull_request_url != "") {
