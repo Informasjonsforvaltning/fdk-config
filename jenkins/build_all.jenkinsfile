@@ -207,7 +207,7 @@ done
 
       slackSend   channel: '#jenkins',
               color: 'danger',
-              message: "Her beregnes det hva som skal bygges"
+              message: "Her beregnes det hva som skal bygges: ${images_to_build}"
 
       images_to_build.each{service ->
         echo "gonna build ${service}"
