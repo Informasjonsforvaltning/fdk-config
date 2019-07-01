@@ -204,6 +204,11 @@ done
       } else {
         images_to_build = check_all_images(checksums)
       }
+
+      slackSend   channel: '#jenkins',
+              color: 'danger',
+              message: "Her beregnes det hva som skal bygges"
+
       images_to_build.each{service ->
         echo "gonna build ${service}"
         def compile = mikrotjenester_map[service]
@@ -279,7 +284,7 @@ done
     stage('Tag images') {
       String yearmonthdate = global_ymd
 
-      def slack_msg = "(FDK) <${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built in " + currentBuild.durationString + ". Services built: ${images_to_build}."
+      def slack_msg = "(FDK) <${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built in " + currentBuild.durationString + ". Services built: xxx."
 
       // its a pull request.
       if (pull_request_url != "") {
