@@ -27,8 +27,13 @@ spec:
             value: {{ required "Missing value FDK_SSO_KEYCLOAK_LOGLEVEL" .Values.FDK_SSO_KEYCLOAK_LOGLEVEL }}
           - name: PROXY_ADDRESS_FORWARDING
             value: {{ required "Missing value FDK_SSO_KEYCLOAK_PROXY_ADDRESS_FORWARDING" .Values.FDK_SSO_KEYCLOAK_PROXY_ADDRESS_FORWARDING | quote }}
-          - name: DB_VENDOR
-            value: h2
+          - name: IDPORTEN_CLIENT_ID
+            value: {{ required "Missing value FDK_SSO_IDPORTEN_CLIENT_ID" .Values.FDK_SSO_IDPORTEN_CLIENT_ID }}
+          - name: IDPORTEN_CLIENT_SECRET
+            value: {{ required "Missing value FDK_SSO_IDPORTEN_CLIENT_SECRET" .Values.FDK_SSO_IDPORTEN_CLIENT_SECRET }}
+          - name: IDPORTEN_OIDC_ROOT
+            value: {{ required "Missing value FDK_SSO_IDPORTEN_OIDC_ROOT" .Values.FDK_SSO_IDPORTEN_OIDC_ROOT }}
+
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
           imagePullPolicy: Always
           name: sso
