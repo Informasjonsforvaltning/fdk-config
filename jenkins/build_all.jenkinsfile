@@ -337,7 +337,14 @@ def buildProject(String app, String checksum, String compile, String branch_name
         }
     }
     stage("Build ${app}") {
-        if (compile.startsWith('mvn')){
+        if (app == "sso") {
+            container('java-docker') {
+                withMaven(maven: 'M3') {
+                    echo "Gonna execute: ${compile}"
+                    sh "(${compile})"
+                }
+            } // container
+        } else if (compile.startsWith('mvn')){
             container('java-docker') {
                 withMaven(maven: 'M3') {
                     // Hack, remove && ... step.
