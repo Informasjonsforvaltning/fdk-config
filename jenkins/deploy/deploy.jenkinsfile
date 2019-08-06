@@ -254,7 +254,7 @@ node ('helm-kubectl'){
         gcloud config set compute/zone europe-north1
         """)
       sh returnStatus: true, script: 'git clone https://github.com/Informasjonsforvaltning/fdk-config.git'
-      sh returnStatus: true, script: "helm template -f values_environment.yaml -f ${masterversion}.yaml fdk-config/helm/ > kubectlapply.yaml"
+      sh returnStatus: true, script: "helm template -f ${masterversion}.yaml -f values_environment.yaml fdk-config/helm/ > kubectlapply.yaml"
       sh returnStatus: true, script: 'cat kubectlapply.yaml'
     } // stage Authenticating wiht cluster
 
