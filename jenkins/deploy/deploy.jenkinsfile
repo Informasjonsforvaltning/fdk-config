@@ -239,8 +239,8 @@ node ('helm-kubectl'){
         sh returnStatus: true, script: 'cp $VALUES ${WORKSPACE}/values_environment.yaml'
         if (tmp_env) {
           sh "sed -i.bak s/XXe2eXX/${deploy_environment}/g ${WORKSPACE}/values_environment.yaml"
-          sh "cat ${WORKSPACE}/values_environment.yaml"
         }
+        sh "cat ${WORKSPACE}/values_environment.yaml"
       }
 
       withCredentials([file(credentialsId: "${gcp_project_name}-k8s", variable: 'SA')]) {
