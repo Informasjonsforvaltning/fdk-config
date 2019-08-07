@@ -1,11 +1,11 @@
-{{ if (.Values.NGINX_ENHETSREGISTERET_PROXY_MOCK_IMAGE) and .Values.NGINX_ENHETSREGISTERET_PROXY_MOCK_IMAGE "true" }}
+{{ if (.Values.NGINX_ENHETSREGISTERET_PROXY_IMAGE) and .Values.NGINX_ENHETSREGISTERET_PROXY_IMAGE "true" }}
 apiVersion: v1
 kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    fdk.service: nginx-enhetsregisteret-proxy-mock
-  name: nginx-enhetsregisteret-proxy-mock
+    fdk.service: nginx-enhetsregisteret-proxy
+  name: nginx-enhetsregisteret-proxy
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   type: NodePort
@@ -14,7 +14,7 @@ spec:
     port: 8080
     targetPort: 8080
   selector:
-    fdk.service: nginx-enhetsregisteret-proxy-mock
+    fdk.service: nginx-enhetsregisteret-proxy
 status:
   loadBalancer: {}
 {{ else }} {{ end }}
