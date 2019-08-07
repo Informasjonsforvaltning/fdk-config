@@ -29,9 +29,6 @@ spec:
           value: {{ required "Missing value FDK_SSO_IDPORTEN_MOCK_DB_VENDOR" .Values.FDK_SSO_IDPORTEN_MOCK_DB_VENDOR }}
         ports:
         - containerPort: 8086
-        resources:
-          requests:
-            memory: {{ required "Missing value SSO_IDPORTEN_MOCK_IMAGE" .Values.SSO_IDPORTEN_MOCK_IMAGE | quote }}
       restartPolicy: Always
 status: {}
 {{ else }} {{ end }}
