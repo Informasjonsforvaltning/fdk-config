@@ -1,0 +1,37 @@
+{{ if (.Values.SSO_IDPORTEN_MOCK_IMAGE and .Values.SSO_IDPORTEN_MOCK_IMAGE "true" }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: sso-idporten-mock
+  name: sso-idporten-mock
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        fdk.service: sso-idporten-mock
+    spec:
+      containers:
+      - image: {{ required "Missing value SSO_IDPORTEN_MOCK_IMAGE" .Values.SSO_IDPORTEN_MOCK_IMAGE }}
+        imagePullPolicy: Always
+        name: sso-idporten-mock
+        env:
+        - name: KEYCLOAK_USER
+          value: {{ required "Missing value FDK_SSO_IDPORTEN_MOCK_KEYCLOAK_USER" .Values.FDK_SSO_IDPORTEN_MOCK_KEYCLOAK_USER }}
+        - name: KEYCLOAK_PASSWORD
+          value: {{ required "Missing value FDK_SSO_IDPORTEN_MOCK_KEYCLOAK_PASSWORD" .Values.FDK_SSO_IDPORTEN_MOCK_KEYCLOAK_PASSWORD }}
+        - name: DB_VENDOR
+          value: {{ required "Missing value FDK_SSO_IDPORTEN_MOCK_DB_VENDOR" .Values.FDK_SSO_IDPORTEN_MOCK_DB_VENDOR }}
+        ports:
+        - containerPort: 8086
+        resources:
+          requests:
+            memory: {{ required "Missing value SSO_IDPORTEN_MOCK_IMAGE" .Values.SSO_IDPORTEN_MOCK_IMAGE | quote }}
+      restartPolicy: Always
+status: {}
+{{ else }} {{ end }}
