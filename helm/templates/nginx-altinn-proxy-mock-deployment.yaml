@@ -1,4 +1,4 @@
-{{ if (.Values.NGINX_ALTINN_PROXY_MOCK_IMAGE and .Values.NGINX_ALTINN_PROXY_MOCK_IMAGE "true" }}
+{{ if (.Values.NGINX_ALTINN_PROXY_MOCK_IMAGE) and .Values.NGINX_ALTINN_PROXY_MOCK_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:

@@ -1,4 +1,4 @@
-{{ if (.Values.SSO_IDPORTEN_MOCK_IMAGE and .Values.SSO_IDPORTEN_MOCK_IMAGE "true" }}
+{{ if (.Values.SSO_IDPORTEN_MOCK_IMAGE) and .Values.SSO_IDPORTEN_MOCK_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:

@@ -1,4 +1,4 @@
-{{ if (.Values.NGINX_ENHETSREGISTERET_PROXY_IMAGE and .Values.NGINX_ENHETSREGISTERET_PROXY_IMAGE "true" }}
+{{ if (.Values.NGINX_ENHETSREGISTERET_PROXY_IMAGE) and .Values.NGINX_ENHETSREGISTERET_PROXY_IMAGE "true" }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
