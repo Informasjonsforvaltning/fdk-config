@@ -1,0 +1,20 @@
+{{ if (.Values.NGINX_ALTINN_PROXY_MOCK_IMAGE) and .Values.NGINX_ALTINN_PROXY_MOCK_IMAGE "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: nginx-altinn-proxy-mock
+  name: nginx-altinn-proxy-mock
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  type: NodePort
+  ports:
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
+  selector:
+    fdk.service: nginx-altinn-proxy-mock
+status:
+  loadBalancer: {}
+{{ else }} {{ end }}
