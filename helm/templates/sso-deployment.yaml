@@ -33,7 +33,8 @@ spec:
             value: {{ required "Missing value FDK_SSO_IDPORTEN_CLIENT_SECRET" .Values.FDK_SSO_IDPORTEN_CLIENT_SECRET }}
           - name: IDPORTEN_OIDC_ROOT
             value: {{ required "Missing value FDK_SSO_IDPORTEN_OIDC_ROOT" .Values.FDK_SSO_IDPORTEN_OIDC_ROOT }}
-
+          - name: SSO_HOST
+            value: {{ required "Missing value FDK_SSO_SSO_HOST" .Values.FDK_SSO_SSO_HOST }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
           imagePullPolicy: Always
           name: sso
