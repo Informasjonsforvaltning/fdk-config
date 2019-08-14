@@ -34,6 +34,22 @@ spec:
         resources:
           requests:
             memory: {{ required "Missing value FDK_CONCEPT_CATALOGUE_MEMORY" .Values.FDK_CONCEPT_CATALOGUE_MEMORY | quote }}
+        livenessProbe:
+          httpGet:
+            path: /begreper?status=UTKAST&orgNummer=111111111
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /begreper?status=UTKAST&orgNummer=111111111
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 5
       restartPolicy: Always
 status: {}
 {{ else }} {{ end }}
