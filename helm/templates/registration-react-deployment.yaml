@@ -26,6 +26,8 @@ spec:
           value: {{ required "Missing value FDK_REGISTRATION_REACT_NODE_ENV" .Values.FDK_REGISTRATION_REACT_NODE_ENV }}
         - name: SEARCH_HOSTNAME
           value: {{ required "Missing value FDK_REGISTRATION_REACT_SEARCH_HOSTNAME" .Values.FDK_REGISTRATION_REACT_SEARCH_HOSTNAME  }}
+        - name: SSO_HOST
+          value: {{ required "Missing value FDK_REGISTRATION_REACT_SSO_HOST" .Values.FDK_REGISTRATION_REACT_SSO_HOST  }}
         - name: REFERENCE_DATA_HOST
           value: {{ .Values.FDK_REGISTRATION_REACT_REFERENCE_DATA_HOST  }}
         - name: REFERENCE_DATA_AUTHORIZATION
