@@ -19,6 +19,8 @@ spec:
     spec:
       containers:
         - env:
+          - name: CONTAINER_IMAGE
+            value: {{ required "Missing value SEARCH_IMAGE" .Values.SEARCH_IMAGE }}
           - name: NODE_ENV
             value: {{ required "Missing value SEARCH_NODE_ENV" .Values.SEARCH_NODE_ENV }}
           - name: DISQUS_SHORTNAME
