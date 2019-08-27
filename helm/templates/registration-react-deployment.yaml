@@ -24,12 +24,14 @@ spec:
         env:
         - name: NODE_ENV
           value: {{ required "Missing value FDK_REGISTRATION_REACT_NODE_ENV" .Values.FDK_REGISTRATION_REACT_NODE_ENV }}
-        - name: SEARCH_HOSTNAME
-          value: {{ required "Missing value FDK_REGISTRATION_REACT_SEARCH_HOSTNAME" .Values.FDK_REGISTRATION_REACT_SEARCH_HOSTNAME  }}
+        - name: SEARCH_HOST
+          value: {{ required "Missing value FDK_REGISTRATION_REACT_SEARCH_HOST" .Values.FDK_REGISTRATION_REACT_SEARCH_HOST  }}
         - name: SSO_HOST
           value: {{ required "Missing value FDK_REGISTRATION_REACT_SSO_HOST" .Values.FDK_REGISTRATION_REACT_SSO_HOST  }}
         - name: REFERENCE_DATA_HOST
           value: {{ .Values.FDK_REGISTRATION_REACT_REFERENCE_DATA_HOST  }}
+        - name: SEARCH_API_AUTHORIZATION
+            value: {{ .Values.FDK_REGISTRATION_REACT_SEARCH_API_AUTHORIZATION  }}
         - name: REFERENCE_DATA_AUTHORIZATION
           value: {{ .Values.FDK_REGISTRATION_REACT_REFERENCE_DATA_AUTHORIZATION  }}
         - name: CONCEPT_REGISTRATION_API_HOST
