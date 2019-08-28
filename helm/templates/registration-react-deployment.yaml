@@ -18,9 +18,6 @@ spec:
         fdk.service: registration-react
     spec:
       containers:
-      - args:
-        - npm
-        - start
         env:
         - name: NODE_ENV
           value: {{ required "Missing value FDK_REGISTRATION_REACT_NODE_ENV" .Values.FDK_REGISTRATION_REACT_NODE_ENV }}
