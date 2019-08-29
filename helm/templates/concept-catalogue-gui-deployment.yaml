@@ -18,10 +18,7 @@ spec:
         fdk.service: concept-catalogue-gui
     spec:
       containers:
-      - args:
-        - npm
-        - start
-        env:
+      - env:
         - name: NODE_ENV
           value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_GUI_NODE_ENV" .Values.FDK_CONCEPT_CATALOGUE_GUI_NODE_ENV }}
         - name: CONCEPT_REGISTRATION_API
