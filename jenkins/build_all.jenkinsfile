@@ -9,6 +9,8 @@ force = params.force
 pull_request_url = params.pull_request_url
 
 echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&before=${before}&pull_request_url=${pull_request_url}"
+echo "Params:"
+echo "${params}"
 
 def pr_status(def status, def sha, def text, def t_url, def context = "continuous-integration/jenkins") {
     // status error, failure, pending, success
