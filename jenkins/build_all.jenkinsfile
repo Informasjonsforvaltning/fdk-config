@@ -13,11 +13,11 @@ echo "Params:"
 echo "${params}"
 
 def pr_status(def status, def sha, def text, def target_url) {
-    echo "New statuses url: " + repository_statuses_url.replace("{sha}",sha)
+    // status error, failure, pending, success
+    def statuses_url = repository_statuses_url.replace("{sha}",sha)
+    echo "Posting status update:${status} to url: ${statuses_url} "
 
     def context = "continuous-integration/jenkins"
-    // status error, failure, pending, success
-    def pr_url = "https://api.github.com/repos/Informasjonsforvaltning/fdk/statuses/" + sha
     def body = """{
   "state": "$status",
   "target_url": "$target_url",
@@ -25,7 +25,7 @@ def pr_status(def status, def sha, def text, def target_url) {
   "context": "$context"
 }"""
     try {
-        httpRequest authentication: "jenkins-github", httpMode: 'POST', requestBody: body,  url: pr_url
+        httpRequest authentication: "jenkins-github", httpMode: 'POST', requestBody: body,  url: statuses_url
     } catch (e) {
         echo "Failed updating status of " + sha
     }
