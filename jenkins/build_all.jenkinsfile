@@ -1,14 +1,13 @@
 @Library('utils') _
 
 // Take params from build with params.bu
-before = params.before
 url = params.url
 ref = params.ref
 name = params.name
 force = params.force
 pull_request_url = params.pull_request_url
 
-echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&before=${before}&pull_request_url=${pull_request_url}"
+echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&pull_request_url=${pull_request_url}"
 echo "Params:"
 echo "${params}"
 
