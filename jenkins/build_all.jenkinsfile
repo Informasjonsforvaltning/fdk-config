@@ -5,10 +5,9 @@ url = params.url
 ref = params.ref
 name = params.name
 force = params.force
-pull_request_url = params.pull_request_url
 repository_statuses_url=params.repository_statuses_url ?: ""
 
-echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}&pull_request_url=${pull_request_url}"
+echo "Rerun link: ${JOB_URL}parambuild/?ref=${ref}&after=${after}"
 echo "Params:"
 echo "${params}"
 
@@ -222,27 +221,7 @@ done
       values_images_text = get_values_images_text(checksums)
     } // stage: Calculate what to..
 
-    if (pull_request_url == "") {
-      stage('Check if PR duplicate') {
-        container('helm-gcloud-kubectl') {
-          withCredentials([file(credentialsId: 'fdk-infra-file', variable: 'SA')]) {
-            sh returnStatus: true, script: 'gcloud auth activate-service-account --key-file $SA'
-          }
-          def found = sh(returnStatus: true, script: "gsutil cp gs://fdk-infra-jenkins/pr/${after} .")
-          if (found==0) {
-            currentBuild.displayName = "duplicate - ${after}"
-            currentBuild.result = 'ABORTED'
-            error("This version is already beeing built from a PR webhook.  Aborting duplicate build")
-            return
-          } else {
-            echo "No PR data found this is not a duplicate (ignore previous file not found error)"
-          }
-        }
-      }
-
-    } else {
-      currentBuild.displayName = currentBuild.displayName + " [PR]"
-    }
+    currentBuild.displayName = currentBuild.displayName + " - " + ref
 
     stage('Build') {
       if (bygg_mikrotjenester.size() > 0) {
@@ -289,11 +268,9 @@ done
 
       def slack_msg = "(FDK) <${BUILD_URL}|${currentBuild.displayName}> (${after_short}) by ${name} was just built in " + currentBuild.durationString + ". Services built: ${build_component_name_list}."
 
-      // its a pull request.
-      if (pull_request_url != "") {
-          //disable run e2e job on pull request. Will not work with multi-repo configuration
-          //build job: 'run-e2e', wait: false , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: after]]
-      }
+      //currently disable run e2e job on each push.
+      //build job: 'run-e2e', wait: false , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: after]]
+
       if (branch_ref == 'heads/develop') {
         slack_msg = slack_msg + " - Started deploying version to ut1!"
         build job: 'deploy-scripts/autodeploy_from_development', wait: false , parameters: [[$class: 'StringParameterValue', name: 'after', value: after]]
