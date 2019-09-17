@@ -221,8 +221,6 @@ done
       values_images_text = get_values_images_text(checksums)
     } // stage: Calculate what to..
 
-    currentBuild.displayName = currentBuild.displayName + " - " + ref
-
     stage('Build') {
       if (bygg_mikrotjenester.size() > 0) {
         try {
