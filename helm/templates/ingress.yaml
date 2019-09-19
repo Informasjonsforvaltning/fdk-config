@@ -59,13 +59,6 @@ spec:
         backend:
           serviceName: sso
           servicePort: 8080
-  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_PUBLISHERS_API" .Values.FDK_INGRESS_HOSTNAME_PUBLISHERS_API }}
-    http:
-      paths:
-      - path: /*
-        backend:
-          serviceName: publishers-api
-          servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
     http:
       paths:
