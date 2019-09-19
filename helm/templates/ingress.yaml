@@ -75,7 +75,6 @@ spec:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE" .Values.FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_HARVESTER" .Values.FDK_INGRESS_HOSTNAME_HARVESTER }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_SSO" .Values.FDK_INGRESS_HOSTNAME_SSO }}
-    - {{ required "Missing value FDK_INGRESS_HOSTNAME_PUBLISHERS_API" .Values.FDK_INGRESS_HOSTNAME_PUBLISHERS_API }}
     secretName: {{ required "Missing value FDK_CERT_NAME_BASE" .Values.FDK_CERT_NAME_BASE }}
   - hosts:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
