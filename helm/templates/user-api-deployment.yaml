@@ -21,6 +21,10 @@ spec:
       - env:
         - name: ALTINN_PROXY_HOST
           value: {{ required "Missing value FDK_USER_API_ALTINN_PROXY_HOST" .Values.FDK_USER_API_ALTINN_PROXY_HOST }}
+        - name: ORGNR_WHITELIST
+          value: {{ required "Missing value FDK_USER_API_ORGNR_WHITELIST" .Values.FDK_USER_API_ORGNR_WHITELIST | quote }}
+        - name: ORGFORM_WHITELIST
+          value: {{ required "Missing value FDK_USER_API_ORGFORM_WHITELIST" .Values.FDK_USER_API_ORGFORM_WHITELIST | quote }}
         image: {{ required "Missing value USER_API_IMAGE" .Values.USER_API_IMAGE }}
         imagePullPolicy: Always
         name: harvester
