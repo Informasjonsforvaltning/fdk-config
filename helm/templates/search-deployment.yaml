@@ -26,6 +26,8 @@ spec:
           - name: DISQUS_SHORTNAME
             value: {{ required "Missing value SEARCH_DISQUS_SHORTNAME" .Values.SEARCH_DISQUS_SHORTNAME }}
           - name: SEARCH_HOST
+            value: {{ .Values.FDK_SEARCH_SEARCH_HOST }}
+          - name: SEARCH_API_HOST
             value: {{ .Values.FDK_SEARCH_SEARCH_API_HOST }}
           - name: SEARCH_API_AUTHORIZATION
             value: {{ .Values.SEARCH_API_AUTHORIZATION }}
