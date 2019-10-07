@@ -34,11 +34,9 @@ def get_promote_env(def current) {
     if (current == "it1") {
         return "prod"
     }
-    if (current == "st1") {
-        return "it1"
     }
     if (current == "ut1") {
-        return "st1"
+        return "it1"
     }
     error("Not able to promote this env.")
     return ""
