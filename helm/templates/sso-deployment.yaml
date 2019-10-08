@@ -43,6 +43,10 @@ spec:
             value: {{ required "Missing value FDK_SSO_CONCEPT_CATALOGUE_HOST" .Values.FDK_SSO_CONCEPT_CATALOGUE_HOST }}
           - name: DEV_CONCEPT_CATALOGUE_HOST
             value: {{ .Values.FDK_SSO_DEV_CONCEPT_CATALOGUE_HOST }}
+          - name: FDK_ADMIN_GUI_HOST
+            value: {{ required "Missing value FDK_SSO_FDK_ADMIN_GUI_HOST" .Values.FDK_SSO_FDK_ADMIN_GUI_HOST }}
+          - name: DEV_FDK_ADMIN_GUI_HOST
+            value: {{ .Values.FDK_SSO_DEV_FDK_ADMIN_GUI_HOST }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
           imagePullPolicy: Always
           name: sso
