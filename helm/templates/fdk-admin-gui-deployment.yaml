@@ -19,10 +19,10 @@ spec:
     spec:
       containers:
       - env:
-        - name: NODE_ENV
-          value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_GUI_NODE_ENV" .Values.FDK_CONCEPT_CATALOGUE_GUI_NODE_ENV }}
-        - name: CONCEPT_REGISTRATION_API
-          value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_GUI_CONCEPT_REGISTRATION_API" .Values.FDK_CONCEPT_CATALOGUE_GUI_CONCEPT_REGISTRATION_API }}
+        - name: OIDC_ISSUER
+          value: {{ required "Missing value FDK_ADMIN_GUI_OIDC_ISSUER" .Values.FDK_ADMIN_GUI_OIDC_ISSUER }}
+        - name: OIDC_CLIENT_ID
+          value: {{ required "Missing value FDK_ADMIN_GUI_OIDC_CLIENT_ID" .Values.FDK_ADMIN_GUI_OIDC_CLIENT_ID }}
         image: {{ required "Missing value FDK_ADMIN_GUI_IMAGE" .Values.FDK_ADMIN_GUI_IMAGE }}
         imagePullPolicy: Always
         name: concept-catalogue-gui
