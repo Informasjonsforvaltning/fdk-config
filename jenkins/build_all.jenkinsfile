@@ -252,7 +252,7 @@ done
             archiveArtifacts artifacts: 'values_images.yaml', excludes: 'no/**'
             build_masterversion_location = "fdk-infra-masterversions/all/${filename}"
             sh "gsutil cp ${filename} gs://${build_masterversion_location}"
-            if (branch_ref == "heads/develop") {
+            if (branch_ref == "heads/develop" || 'heads/master') {
                 build_masterversion_location = "fdk-infra-masterversions/develop/${filename}"
                 sh "gsutil cp ${filename} gs://${build_masterversion_location}"
             }
@@ -269,7 +269,7 @@ done
       //currently disable run e2e job on each push.
       //build job: 'run-e2e', wait: false , parameters: [[$class: 'StringParameterValue', name: 'masterversion', value: after]]
 
-      if (branch_ref == 'heads/develop') {
+      if (branch_ref == 'heads/develop' || 'heads/master') {
         slack_msg = slack_msg + " - Started deploying version to ut1!"
         build job: 'deploy-scripts/autodeploy_from_development', wait: false , parameters: [[$class: 'StringParameterValue', name: 'after', value: after]]
 
