@@ -20,7 +20,7 @@ spec:
       containers:
       - env:
         - name: MONGO_USERNAME
-          value: {{ required "Missing value FDK_HARVEST_ADMIN_MONGO_PASSWORD" .Values.FDK_HARVEST_ADMIN_MONGO_PASSWORD }}
+          value: {{ required "Missing value FDK_HARVEST_ADMIN_MONGO_USERNAME" .Values.FDK_HARVEST_ADMIN_MONGO_USERNAME }}
         - name: MONGO_PASSWORD
           value: {{ required "Missing value FDK_HARVEST_ADMIN_MONGO_PASSWORD" .Values.FDK_HARVEST_ADMIN_MONGO_PASSWORD }}
         image: {{ required "Missing value FDK_HARVEST_ADMIN_IMAGE" .Values.FDK_HARVEST_ADMIN_IMAGE }}
