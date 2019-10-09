@@ -1,0 +1,36 @@
+{{ if (.Values.FDK_HARVEST_ADMIN_IMAGE) and .Values.FDK_HARVEST_ADMIN_IMAGE "true" }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: fdk-harvest-admin
+  name: fdk-harvest-admin
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        fdk.service: fdk-harvest-admin
+    spec:
+      containers:
+      - env:
+        - name: MONGO_USERNAME
+          value: {{ required "Missing value FDK_HARVEST_ADMIN_MONGO_PASSWORD" .Values.FDK_HARVEST_ADMIN_MONGO_PASSWORD }}
+        - name: MONGO_PASSWORD
+          value: {{ required "Missing value FDK_HARVEST_ADMIN_MONGO_PASSWORD" .Values.FDK_HARVEST_ADMIN_MONGO_PASSWORD }}
+        image: {{ required "Missing value FDK_HARVEST_ADMIN_IMAGE" .Values.FDK_HARVEST_ADMIN_IMAGE }}
+        imagePullPolicy: Always
+        name: fdk-harvest-admin
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: {{  required "Missing value FDK_HARVEST_ADMIN_MEMORY" .Values.FDK_HARVEST_ADMIN_MEMORY | quote }}
+      restartPolicy: Always
+status: {}
+{{ else }} {{ end }}

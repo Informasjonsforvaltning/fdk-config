@@ -1,0 +1,20 @@
+{{ if (.Values.FDK_HARVEST_ADMIN_IMAGE) and .Values.FDK_HARVEST_ADMIN_IMAGE "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: fdk-harvest-admin
+  name: fdk-harvest-admin
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  type: NodePort
+  ports:
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
+  selector:
+    fdk.service: fdk-harvest-admin
+status:
+  loadBalancer: {}
+{{ else }} {{ end }}
