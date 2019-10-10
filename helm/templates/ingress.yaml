@@ -66,6 +66,13 @@ spec:
         backend:
           serviceName: fdk-admin-gui
           servicePort: 8080
+  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_ADMIN_API" .Values.FDK_INGRESS_HOSTNAME_ADMIN_API }}
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: fdk-harvest-admin
+          servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
     http:
       paths:
@@ -83,6 +90,7 @@ spec:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_HARVESTER" .Values.FDK_INGRESS_HOSTNAME_HARVESTER }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_SSO" .Values.FDK_INGRESS_HOSTNAME_SSO }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ADMIN" .Values.FDK_INGRESS_HOSTNAME_ADMIN }}
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_ADMIN_API" .Values.FDK_INGRESS_HOSTNAME_ADMIN_API }}
     secretName: {{ required "Missing value FDK_CERT_NAME_BASE" .Values.FDK_CERT_NAME_BASE }}
   - hosts:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
