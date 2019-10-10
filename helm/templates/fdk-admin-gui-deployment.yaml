@@ -27,7 +27,7 @@ spec:
           value: {{ required "Missing value FDK_ADMIN_GUI_FDK_HARVEST_ADMIN_HOST" .Values.FDK_ADMIN_GUI_FDK_HARVEST_ADMIN_HOST }}
         image: {{ required "Missing value FDK_ADMIN_GUI_IMAGE" .Values.FDK_ADMIN_GUI_IMAGE }}
         imagePullPolicy: Always
-        name: concept-catalogue-gui
+        name: fdk-admin-gui
         ports:
         - containerPort: 8000
         resources:
