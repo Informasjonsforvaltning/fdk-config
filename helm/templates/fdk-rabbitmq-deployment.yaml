@@ -1,0 +1,41 @@
+{{ if (.Values.FDK_RABBITMQ_IMAGE) and .Values.FDK_RABBITMQ_IMAGE "true" }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    fdk.service: fdk-rabbitmq
+  name: fdk-rabbitmq
+  namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        fdk.service: fdk-rabbitmq
+    spec:
+      containers:
+      - image: {{ required "Missing value FDK_RABBITMQ_IMAGE" .Values.FDK_RABBITMQ_IMAGE }}
+        imagePullPolicy: Always
+        name: fdk-rabbitmq
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER}}
+        - name: RABBITMQ_DEFAULT_PASS
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ__DEFAULT_PASS}}
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672
+        volumeMounts:
+        - mountPath: /var/lib/rabbitmq
+          name: fdk-rabbitmq-claim0
+      restartPolicy: Always
+      volumes:
+      - name: fdk-rabbitmq-claim0
+        persistentVolumeClaim:
+          claimName: fdk-rabbitmq-claim0
+status: {}
+{{ else }} {{ end }}

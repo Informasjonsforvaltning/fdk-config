@@ -70,3 +70,6 @@ FDK_ADMIN_GUI_MEMORY: "100Mi"
 
 ##FDK Harvest admin API
 FDK_HARVEST_ADMIN_MEMORY: "100Mi"
+
+##FDK message broker
+FDK_RABBITMQ_IMAGE: "rabbitmq:management"
