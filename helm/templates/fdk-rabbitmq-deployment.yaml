@@ -23,9 +23,9 @@ spec:
         name: fdk-rabbitmq
         env:
         - name: RABBITMQ_DEFAULT_USER
-          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER}}
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER | quote}}
         - name: RABBITMQ_DEFAULT_PASS
-          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS}}
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS | quote}}
         ports:
         - containerPort: 5672
         - containerPort: 15672
