@@ -69,7 +69,7 @@ def do_checksums(services) {
               url: url]]])
     services.each { app, value ->
       //special treatment of applications not in application directory
-      if (app == "concept-catalogue-gui" || app == "fdk-harvest-admin" || app == "fdk-admin-gui") {
+      if (app == "concept-catalogue-gui" || app == "fdk-harvest-admin" || app == "fdk-admin-gui" || app == "concept-catalogue") {
           //application on root of git repository
           checksum = wrapper.script (
                   script: "git ls-files | git hash-object --stdin-paths | git hash-object --stdin",
