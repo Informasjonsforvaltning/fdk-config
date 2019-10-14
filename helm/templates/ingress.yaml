@@ -105,6 +105,8 @@ spec:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_SSO" .Values.FDK_INGRESS_HOSTNAME_SSO }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ADMIN" .Values.FDK_INGRESS_HOSTNAME_ADMIN }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ADMIN_API" .Values.FDK_INGRESS_HOSTNAME_ADMIN_API }}
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_BROKER" .Values.FDK_INGRESS_HOSTNAME_BROKER }}
+    - {{ required "Missing value FDK_INGRESS_HOSTNAME_BROKER_ADMIN" .Values.FDK_INGRESS_HOSTNAME_BROKER_ADMIN }}
     secretName: {{ required "Missing value FDK_CERT_NAME_BASE" .Values.FDK_CERT_NAME_BASE }}
   - hosts:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
