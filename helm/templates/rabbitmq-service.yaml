@@ -4,8 +4,8 @@ kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    fdk.service: fdk-rabbitmq
-  name: fdk-rabbitmq
+    fdk.service: rabbitmq
+  name: rabbitmq
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   type: NodePort
@@ -17,7 +17,7 @@ spec:
     port: 15672
     targetPort: 15672
   selector:
-    fdk.service: fdk-rabbitmq
+    fdk.service: rabbitmq
 status:
   loadBalancer: {}
 {{ else }} {{ end }}

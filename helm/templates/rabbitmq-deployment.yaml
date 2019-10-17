@@ -4,8 +4,8 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    fdk.service: fdk-rabbitmq
-  name: fdk-rabbitmq
+    fdk.service: rabbitmq
+  name: rabbitmq
   namespace: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
 spec:
   replicas: 1
@@ -15,7 +15,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        fdk.service: fdk-rabbitmq
+        fdk.service: rabbitmq
     spec:
       containers:
       - image: {{ required "Missing value FDK_RABBITMQ_IMAGE" .Values.FDK_RABBITMQ_IMAGE }}
@@ -31,11 +31,11 @@ spec:
         - containerPort: 15672
         volumeMounts:
         - mountPath: /var/lib/rabbitmq
-          name: fdk-rabbitmq-claim0
+          name: rabbitmq-claim0
       restartPolicy: Always
       volumes:
-      - name: fdk-rabbitmq-claim0
+      - name: rabbitmq-claim0
         persistentVolumeClaim:
-          claimName: fdk-rabbitmq-claim0
+          claimName: rabbitmq-claim0
 status: {}
 {{ else }} {{ end }}
