@@ -34,7 +34,7 @@ spec:
           name: rabbitmq-claim1
       restartPolicy: Always
       volumes:
-      - name: rabbitmq-claim0
+      - name: rabbitmq-claim1
         persistentVolumeClaim:
           claimName: rabbitmq-claim1
 status: {}
