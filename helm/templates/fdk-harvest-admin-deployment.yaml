@@ -20,9 +20,9 @@ spec:
       containers:
       - env:
         - name: RABBIT_USERNAME
-          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER }}
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER | quote }}
         - name: RABBIT_PASSWORD
-          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS }}
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS | quote }}
         - name: MONGO_USERNAME
           value: {{ required "Missing value FDK_HARVEST_ADMIN_MONGO_USERNAME" .Values.FDK_HARVEST_ADMIN_MONGO_USERNAME }}
         - name: MONGO_PASSWORD
