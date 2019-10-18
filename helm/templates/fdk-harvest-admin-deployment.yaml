@@ -19,6 +19,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: KEYCLOAK_AUTH_URL
+          value: {{ required "Missing value FDK_HARVEST_ADMIN_SSO_AUTH_URL" .Values.FDK_HARVEST_ADMIN_SSO_AUTH_URL | quote }}
         - name: RABBIT_USERNAME
           value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER | quote }}
         - name: RABBIT_PASSWORD
