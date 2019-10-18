@@ -18,6 +18,10 @@ spec:
     spec:
       containers:
       - env:
+        - name: RABBIT_USERNAME
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER }}
+        - name: RABBIT_PASSWORD
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS }}
         - name: FDK_ES_CLUSTERNAME
           value: {{ required "Missing value FDK_ES_CLUSTERNAME" .Values.FDK_ES_CLUSTERNAME }}
         - name: FDK_ES_CLUSTERNODES
