@@ -16,6 +16,9 @@ spec:
   - name: "15672"
     port: 15672
     targetPort: 15672
+  - name: "8080"
+    port: 8080
+    targetPort: 15672
   selector:
     fdk.service: rabbitmq
 status:
