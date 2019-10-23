@@ -86,7 +86,7 @@ spec:
       - path: /*
         backend:
           serviceName: rabbitmq
-          servicePort: 15672
+          servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
     http:
       paths:
