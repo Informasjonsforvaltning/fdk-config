@@ -73,3 +73,7 @@ FDK_HARVEST_ADMIN_MEMORY: "100Mi"
 
 ##FDK message broker
 FDK_RABBITMQ_IMAGE: "rabbitmq:management"
+
+##MongoDB
+PUBAPI_MONGODB_MEMORY: "1000Mi"
+MONGODB_IMAGE: "mongo:latest"
