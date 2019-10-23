@@ -20,7 +20,7 @@ spec:
       containers:
       - image: {{ required "Missing value FDK_RABBITMQ_IMAGE" .Values.FDK_RABBITMQ_IMAGE }}
         imagePullPolicy: Always
-        name: fdk-rabbitmq
+        name: rabbitmq
         env:
         - name: RABBITMQ_DEFAULT_USER
           value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER | quote}}
