@@ -24,6 +24,10 @@ spec:
           value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_MONGO_USERNAME" .Values.FDK_CONCEPT_CATALOGUE_MONGO_USERNAME }}
         - name: MONGO_PASSWORD
           value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_MONGO_PASSWORD" .Values.FDK_CONCEPT_CATALOGUE_MONGO_PASSWORD }}
+        - name: RABBIT_USERNAME
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER }}
+        - name: RABBIT_PASSWORD
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS }}
         image: {{ required "Missing value CONCEPT_CATALOGUE_IMAGE" .Values.CONCEPT_CATALOGUE_IMAGE }}
         imagePullPolicy: Always
         name: concept-catalogue
