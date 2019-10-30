@@ -27,7 +27,7 @@ spec:
           value: {{ required "Missing value FDK_USER_API_ORGFORM_WHITELIST" .Values.FDK_USER_API_ORGFORM_WHITELIST | quote }}
         image: {{ required "Missing value USER_API_IMAGE" .Values.USER_API_IMAGE }}
         imagePullPolicy: Always
-        name: harvester
+        name: user-api
         ports:
         - containerPort: 8080
         resources:
