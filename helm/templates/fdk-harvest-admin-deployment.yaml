@@ -37,6 +37,22 @@ spec:
         resources:
           requests:
             memory: {{  required "Missing value FDK_HARVEST_ADMIN_MEMORY" .Values.FDK_HARVEST_ADMIN_MEMORY | quote }}
+        livenessProbe:
+          httpGet:
+            path: /api/datasources
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /api/datasources
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 5
       restartPolicy: Always
 status: {}
 {{ else }} {{ end }}
