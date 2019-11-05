@@ -25,6 +25,8 @@ spec:
           value: {{ required "Missing value FDK_USER_API_ORGNR_WHITELIST" .Values.FDK_USER_API_ORGNR_WHITELIST | quote }}
         - name: ORGFORM_WHITELIST
           value: {{ required "Missing value FDK_USER_API_ORGFORM_WHITELIST" .Values.FDK_USER_API_ORGFORM_WHITELIST | quote }}
+        - name: ADMIN_LIST
+          value: {{ .Values.FDK_USER_API_ADMIN_LIST | quote }}
         image: {{ required "Missing value USER_API_IMAGE" .Values.USER_API_IMAGE }}
         imagePullPolicy: Always
         name: user-api
