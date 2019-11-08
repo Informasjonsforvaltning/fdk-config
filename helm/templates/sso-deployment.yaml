@@ -47,6 +47,18 @@ spec:
             value: {{ required "Missing value FDK_SSO_FDK_ADMIN_GUI_HOST" .Values.FDK_SSO_FDK_ADMIN_GUI_HOST }}
           - name: DEV_FDK_ADMIN_GUI_HOST
             value: {{ .Values.FDK_SSO_DEV_FDK_ADMIN_GUI_HOST }}
+          - name: EMAIL_VERIFY
+            value: {{ .Values.FDK_SSO_EMAIL_VERIFY }}
+          - name: SMTP_FROM
+            value: {{ .Values.FDK_SSO_SMTP_FROM }}
+          - name: SMTP_FROM_NAME
+            value: {{ .Values.FDK_SSO_SMTP_FROM_NAME }}
+          - name: SMTP_HOST
+            value: {{ .Values.FDK_SSO_SMTP_HOST }}
+          - name: SMTP_USER
+            value: {{ .Values.FDK_SSO_SMTP_USER }}
+          - name: SMTP_PASSWORD
+            value: {{ .Values.FDK_SSO_SMTP_PASSWORD }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
           imagePullPolicy: Always
           name: sso
