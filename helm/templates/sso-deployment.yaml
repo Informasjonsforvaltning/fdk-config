@@ -59,18 +59,18 @@ spec:
             value: {{ .Values.FDK_SSO_SMTP_USER }}
           - name: SMTP_PASSWORD
             value: {{ .Values.FDK_SSO_SMTP_PASSWORD }}
-#          - name: DB_VENDOR
-#            value: {{ required "Missing value FDK_SSO_DB_VENDOR" .Values.FDK_SSO_DB_VENDOR }}
-#          - name: DB_ADDR
-#            value: {{ required "Missing value FDK_SSO_DB_ADDR" .Values.FDK_SSO_DB_ADDR }}
-#          - name: DB_DATABASE
-#            value: {{ required "Missing value FDK_SSO_DB_DATABASE" .Values.FDK_SSO_DB_DATABASE }}
-#          - name: DB_USER
-#            value: {{ required "Missing value FDK_SSO_DB_USER" .Values.FDK_SSO_DB_USER }}
-#          - name: DB_SCHEMA
-#            value: {{ required "Missing value FDK_SSO_DB_SCHEMA" .Values.FDK_SSO_DB_SCHEMA }}
-#          - name: DB_PASSWORD
-#            value: {{ required "Missing value FDK_SSO_DB_PASSWORD" .Values.FDK_SSO_DB_PASSWORD }}
+          - name: DB_VENDOR
+            value: {{ required "Missing value FDK_SSO_DB_VENDOR" .Values.FDK_SSO_DB_VENDOR }}
+          - name: DB_ADDR
+            value: {{ required "Missing value FDK_SSO_DB_ADDR" .Values.FDK_SSO_DB_ADDR }}
+          - name: DB_DATABASE
+            value: {{ required "Missing value FDK_SSO_DB_DATABASE" .Values.FDK_SSO_DB_DATABASE }}
+          - name: DB_USER
+            value: {{ required "Missing value FDK_SSO_DB_USER" .Values.FDK_SSO_DB_USER }}
+          - name: DB_SCHEMA
+            value: {{ required "Missing value FDK_SSO_DB_SCHEMA" .Values.FDK_SSO_DB_SCHEMA }}
+          - name: DB_PASSWORD
+            value: {{ required "Missing value FDK_SSO_DB_PASSWORD" .Values.FDK_SSO_DB_PASSWORD }}
           image: {{ required "Missing value SSO_IMAGE" .Values.SSO_IMAGE }}
           imagePullPolicy: Always
           name: sso
