@@ -28,6 +28,8 @@ spec:
           value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER }}
         - name: RABBIT_PASSWORD
           value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS }}
+        - name: COLLECTION_BASE_URI
+          value: {{ required "Missing value FDK_CONCEPT_CATALOGUE_COLLECTION_BASE_URI" .Values.FDK_CONCEPT_CATALOGUE_COLLECTION_BASE_URI }}
         image: {{ required "Missing value CONCEPT_CATALOGUE_IMAGE" .Values.CONCEPT_CATALOGUE_IMAGE }}
         imagePullPolicy: Always
         name: concept-catalogue
