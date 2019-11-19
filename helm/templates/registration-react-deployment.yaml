@@ -33,6 +33,8 @@ spec:
           value: {{ .Values.FDK_REGISTRATION_REACT_CONCEPT_REGISTRATION_API_HOST  }}
         - name: CONCEPT_REGISTRATION_HOST
           value: {{ .Values.FDK_REGISTRATION_REACT_CONCEPT_REGISTRATION_HOST  }}
+        - name: ORGANIZATION_API_HOST
+          value: {{ .Values.ORGANIZATION_CATALOGUE_HOST  }}
         image: {{ required "Missing value REGISTRATION_REACT_IMAGE" .Values.REGISTRATION_REACT_IMAGE }}
         imagePullPolicy: Always
         name: registration-react
