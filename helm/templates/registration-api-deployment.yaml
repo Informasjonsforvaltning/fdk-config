@@ -59,6 +59,8 @@ spec:
           value: {{ required "Missing value FDK_REGISTRATION_API_REGISTRATIONAPI_SERVERNAME" .Values.FDK_REGISTRATION_API_REGISTRATIONAPI_SERVERNAME | quote }}
         - name: FDK_ENHETSREGISTERET_PROXY_URL
           value: {{ .Values.FDK_REGISTRATION_API_ENHETSREGISTERET_PROXY_URL }}
+        - name: ORGANIZATION_CATALOGUE_URL
+          value: {{ required "Missing value FDK_REGISTRATION_API_ORGANIZATION_CATALOGUE_URL" .Values.FDK_REGISTRATION_API_ORGANIZATION_CATALOGUE_URL }}
         image: {{ required "Missing value REGISTRATION_API_IMAGE" .Values.REGISTRATION_API_IMAGE }}
         imagePullPolicy: Always
         name: registration-api
