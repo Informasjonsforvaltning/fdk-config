@@ -61,6 +61,10 @@ spec:
           value: {{ .Values.FDK_REGISTRATION_API_ENHETSREGISTERET_PROXY_URL }}
         - name: ORGANIZATION_CATALOGUE_URL
           value: {{ required "Missing value FDK_REGISTRATION_API_ORGANIZATION_CATALOGUE_URL" .Values.FDK_REGISTRATION_API_ORGANIZATION_CATALOGUE_URL }}
+        - name: RABBIT_USERNAME
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER | quote }}
+        - name: RABBIT_PASSWORD
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS | quote }}
         image: {{ required "Missing value REGISTRATION_API_IMAGE" .Values.REGISTRATION_API_IMAGE }}
         imagePullPolicy: Always
         name: registration-api
