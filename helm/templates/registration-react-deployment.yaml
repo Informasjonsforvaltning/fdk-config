@@ -35,8 +35,8 @@ spec:
           value: {{ .Values.FDK_REGISTRATION_REACT_CONCEPT_REGISTRATION_HOST  }}
         - name: ORGANIZATION_API_HOST
           value: {{ .Values.ORGANIZATION_CATALOGUE_HOST  }}
-        - name: NAMESPACE
-          value: {{ required "Missing value NAMESPACE" .Values.NAMESPACE }}
+        - name: USE_DEMO_LOGO
+          value: {{ .Values.USE_DEMO_LOGO }}
         image: {{ required "Missing value REGISTRATION_REACT_IMAGE" .Values.REGISTRATION_REACT_IMAGE }}
         imagePullPolicy: Always
         name: registration-react

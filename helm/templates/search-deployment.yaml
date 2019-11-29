@@ -33,6 +33,8 @@ spec:
             value: {{ .Values.FDK_SEARCH_NAP_HOST }}
           - name: SEARCH_API_AUTHORIZATION
             value: {{ .Values.SEARCH_API_AUTHORIZATION }}
+          - name: USE_DEMO_LOGO
+            value: {{ .Values.USE_DEMO_LOGO }}
           image: {{ required "Missing value SEARCH_IMAGE" .Values.SEARCH_IMAGE }}
           imagePullPolicy: Always
           name: search
