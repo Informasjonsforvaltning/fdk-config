@@ -48,7 +48,7 @@ spec:
           - name: DEV_FDK_ADMIN_GUI_HOST
             value: {{ .Values.FDK_SSO_DEV_FDK_ADMIN_GUI_HOST }}
           - name: EMAIL_VERIFY
-            value: {{ required "Missing value FDK_SSO_EMAIL_VERIFY" .Values.FDK_SSO_EMAIL_VERIFY }}
+            value: {{ required "Missing value FDK_SSO_EMAIL_VERIFY" .Values.FDK_SSO_EMAIL_VERIFY | quote }}
           - name: SMTP_FROM
             value: {{ required "Missing value SMTP_FROM" .Values.SMTP_FROM }}
           - name: SMTP_FROM_NAME
