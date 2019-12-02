@@ -50,15 +50,15 @@ spec:
           - name: EMAIL_VERIFY
             value: {{ .Values.FDK_SSO_EMAIL_VERIFY }}
           - name: SMTP_FROM
-            value: {{ .Values.FDK_SSO_SMTP_FROM }}
+            value: {{ required "Missing value SMTP_FROM" .Values.SMTP_FROM }}
           - name: SMTP_FROM_NAME
-            value: {{ .Values.FDK_SSO_SMTP_FROM_NAME }}
+            value: {{ required "Missing value SMTP_FROM_NAME" .Values.SMTP_FROM_NAME | quote }}
           - name: SMTP_HOST
-            value: {{ .Values.FDK_SSO_SMTP_HOST }}
+            value: {{ required "Missing value SMTP_HOST" .Values.SMTP_HOST }}
           - name: SMTP_USER
-            value: {{ .Values.FDK_SSO_SMTP_USER }}
+            value: {{ required "Missing value SMTP_USER" .Values.SMTP_USER }}
           - name: SMTP_PASSWORD
-            value: {{ .Values.FDK_SSO_SMTP_PASSWORD }}
+            value: {{ required "Missing value SMTP_PASSWORD" .Values.SMTP_PASSWORD }}
           - name: DB_VENDOR
             value: {{ required "Missing value FDK_SSO_DB_VENDOR" .Values.FDK_SSO_DB_VENDOR }}
           - name: DB_ADDR
