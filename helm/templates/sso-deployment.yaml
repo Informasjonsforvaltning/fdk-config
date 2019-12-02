@@ -58,7 +58,7 @@ spec:
           - name: SMTP_USER
             value: {{ required "Missing value SMTP_USER" .Values.SMTP_USER }}
           - name: SMTP_PASSWORD
-            value: {{ required "Missing value SMTP_PASSWORD" .Values.SMTP_PASSWORD }}
+            value: {{ required "Missing value SMTP_PASSWORD" .Values.SMTP_PASSWORD | quote  }}
           - name: DB_VENDOR
             value: {{ required "Missing value FDK_SSO_DB_VENDOR" .Values.FDK_SSO_DB_VENDOR }}
           - name: DB_ADDR
