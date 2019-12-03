@@ -19,6 +19,10 @@ spec:
     spec:
       containers:
       - env:
+        - name: RABBIT_USERNAME
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_USER" .Values.FDK_RABBITMQ_DEFAULT_USER | quote }}
+        - name: RABBIT_PASSWORD
+          value: {{ required "Missing value FDK_RABBITMQ_DEFAULT_PASS" .Values.FDK_RABBITMQ_DEFAULT_PASS | quote }}
         - name: SPRING_PROFILES_ACTIVE
           value: {{ required "Missing value SPRING_PROFILES_ACTIVE" .Values.SPRING_PROFILES_ACTIVE }}
         - name: emailUsername
