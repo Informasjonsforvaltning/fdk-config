@@ -35,6 +35,8 @@ spec:
           value: {{ .Values.FDK_REGISTRATION_REACT_CONCEPT_REGISTRATION_HOST  }}
         - name: ORGANIZATION_API_HOST
           value: {{ .Values.ORGANIZATION_CATALOGUE_HOST  }}
+        - name: RECORDS_OF_PROCESSING_ACTIVITIES_HOST
+          value: {{ .Values.RECORDS_OF_PROCESSING_ACTIVITIES_HOST  }}
         - name: USE_DEMO_LOGO
           value: {{ .Values.USE_DEMO_LOGO | quote }}
         image: {{ required "Missing value REGISTRATION_REACT_IMAGE" .Values.REGISTRATION_REACT_IMAGE }}
