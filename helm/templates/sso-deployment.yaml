@@ -47,6 +47,10 @@ spec:
             value: {{ required "Missing value FDK_SSO_FDK_ADMIN_GUI_HOST" .Values.FDK_SSO_FDK_ADMIN_GUI_HOST }}
           - name: DEV_FDK_ADMIN_GUI_HOST
             value: {{ .Values.FDK_SSO_DEV_FDK_ADMIN_GUI_HOST }}
+          - name: RECORDS_OF_PROCESSING_ACTIVITIES_GUI_HOST
+            value: {{ required "Missing value RECORDS_OF_PROCESSING_ACTIVITIES_GUI_HOST" .Values.RECORDS_OF_PROCESSING_ACTIVITIES_HOST }}
+          - name: DEV_RECORDS_OF_PROCESSING_ACTIVITIES_GUI_HOST
+            value: {{ .Values.DEV_RECORDS_OF_PROCESSING_ACTIVITIES_GUI_HOST }}
           - name: EMAIL_VERIFY
             value: {{ required "Missing value FDK_SSO_EMAIL_VERIFY" .Values.FDK_SSO_EMAIL_VERIFY | quote }}
           - name: SMTP_FROM
