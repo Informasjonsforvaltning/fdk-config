@@ -37,7 +37,7 @@ spec:
       - path: /*
         backend:
           serviceName: concept-catalogue-gui
-          servicePort: 3111
+          servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE" .Values.FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE }}
     http:
       paths:
