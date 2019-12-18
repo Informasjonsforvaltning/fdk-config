@@ -43,7 +43,7 @@ spec:
         imagePullPolicy: Always
         name: registration-react
         ports:
-        - containerPort: 4300
+        - containerPort: 8080
         resources: 
           requests:
             memory: {{  required "Missing value FDK_REGISTRATION_REACT_MEMORY" .Values.FDK_REGISTRATION_REACT_MEMORY | quote }}
