@@ -39,7 +39,7 @@ spec:
           imagePullPolicy: Always
           name: search
           ports:
-          - containerPort: 3000
+          - containerPort: 8080
           resources: 
             requests:
               memory: {{ required "Missing value FDK_SEARCH_MEMORY" .Values.FDK_SEARCH_MEMORY | quote }}
