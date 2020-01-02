@@ -22,14 +22,14 @@ spec:
       paths:
       - path: /*
         backend:
-          serviceName: nginx-search
+          serviceName: fdk-nginx-search
           servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_NAP" .Values.FDK_INGRESS_HOSTNAME_NAP }}
     http:
       paths:
       - path: /*
         backend:
-          serviceName: nginx-search
+          serviceName: fdk-nginx-search
           servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE_GUI" .Values.FDK_INGRESS_HOSTNAME_CONCEPT_CATALOGUE_GUI }}
     http:
@@ -91,7 +91,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: nginx-search
+          serviceName: fdk-nginx-search
           servicePort: 8080
         path: /*
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_ORGANIZATION_CATALOGUE" .Values.FDK_INGRESS_HOSTNAME_ORGANIZATION_CATALOGUE }}
