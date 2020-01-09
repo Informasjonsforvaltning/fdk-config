@@ -105,9 +105,14 @@ spec:
     http:
       paths:
         - backend:
-            serviceName: records-of-processing-activities
+            serviceName: records-of-processing-activities-gui
             servicePort: 8080
           path: /*
+  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_PROTOCOL_API" .Values.FDK_INGRESS_HOSTNAME_PROTOCOL_API }}
+    http:
+      paths:
+        - backend:
+            serviceName: records-of-processing-activites
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_TRANSPORTPORTAL" .Values.FDK_INGRESS_HOSTNAME_TRANSPORTPORTAL }}
     http:
       paths:
