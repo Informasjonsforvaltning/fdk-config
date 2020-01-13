@@ -113,7 +113,7 @@ spec:
       paths:
         - backend:
             serviceName: records-of-processing-activites
-  - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_TRANSPORTPORTAL" .Values.FDK_INGRESS_HOSTNAME_TRANSPORTPORTAL }}
+  - host: {{ .Values.FDK_INGRESS_HOSTNAME_TRANSPORTPORTAL }}
     http:
       paths:
         - backend:
