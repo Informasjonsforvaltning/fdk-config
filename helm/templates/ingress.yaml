@@ -113,6 +113,8 @@ spec:
       paths:
         - backend:
             serviceName: records-of-processing-activites
+            servicePort: 8080
+          path: /*
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_TRANSPORTPORTAL" .Values.FDK_INGRESS_HOSTNAME_TRANSPORTPORTAL }}
     http:
       paths:
