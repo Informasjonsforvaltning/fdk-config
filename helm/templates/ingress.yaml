@@ -130,7 +130,6 @@ spec:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_BROKER_ADMIN" .Values.FDK_INGRESS_HOSTNAME_BROKER_ADMIN }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ORGANIZATION_CATALOGUE" .Values.FDK_INGRESS_HOSTNAME_ORGANIZATION_CATALOGUE }}
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_PROTOCOL" .Values.FDK_INGRESS_HOSTNAME_PROTOCOL }}
-    - {{ required "Missing value FDK_INGRESS_HOSTNAME_PROTOCOL_API" .Values.FDK_INGRESS_HOSTNAME_PROTOCOL_API }}
     secretName: {{ required "Missing value FDK_CERT_NAME_BASE" .Values.FDK_CERT_NAME_BASE }}
   - hosts:
     - {{ required "Missing value FDK_INGRESS_HOSTNAME_ENV" .Values.FDK_INGRESS_HOSTNAME_ENV }}
