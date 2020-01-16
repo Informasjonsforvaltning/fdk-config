@@ -50,7 +50,7 @@ spec:
       paths:
       - path: /*
         backend:
-          serviceName: harvester
+          serviceName: fdk-dataset-harvester-gui
           servicePort: 8080
   - host: {{ required "Missing value FDK_INGRESS_HOSTNAME_SSO" .Values.FDK_INGRESS_HOSTNAME_SSO }}
     http:
