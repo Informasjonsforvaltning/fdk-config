@@ -203,10 +203,8 @@ node ('helm-kubectl'){
         def backup_label = "${BUILD_ID}-" + yearmonthdate
         def backupscript = """
             gcloud compute --project fdk-prod disks snapshot "fdk-prod-elasticsearch5" --snapshot-names "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --zone "europe-north1-a &"
-            gcloud compute --project fdk-prod disks snapshot "fdk-prod-fuseki" --snapshot-names "autogcs-autodeploy-prod-fuseki-${backup_label}" --zone "europe-north1-a &"
             wait
-            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --labels="snapshotdays="14"" &
-            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-fuseki-${backup_label}" --labels="snapshotdays="14"" &"""
+            gcloud compute --project fdk-prod snapshots add-labels "autogcs-autodeploy-prod-elasticsearch5-${backup_label}" --labels="snapshotdays="14"" &"""
             echo "Running: " + backupscript
 
             wrapper.script(stepName: "Backup prod.",
