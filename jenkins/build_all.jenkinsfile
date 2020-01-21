@@ -122,8 +122,6 @@ def get_values_images_text(checksums) {
         String line = service_to_template_name(key) + ": " + "eu.gcr.io/fdk-infra/${key}:" + value
         lines.add(line)
     }
-    lines.add("ES5_BUSY_IMAGE: busybox")
-    lines.add("ES5_IMAGE: docker.elastic.co/elasticsearch/elasticsearch:5.6.9")
     return lines.join("\n")
 }
 
